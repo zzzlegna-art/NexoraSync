@@ -93,13 +93,13 @@ public partial class MainWindow : Window
         UpdatesPanel.Visibility = name == "updates" ? Visibility.Visible : Visibility.Collapsed;
         (PageTitle.Text, PageSubtitle.Text) = name switch
         {
-            "folder" => ("Shared folder", "Choose the local home for your shared files."),
-            "activity" => ("Activity", "Track changes and events across your workspace."),
-            "devices" => ("Devices", "Manage the computers connected to your private workspace."),
-            "settings" => ("Configuración", "Controla tu conexión y tus preferencias locales."),
-            "guide" => ("Cómo utilizarlo", "Una guía rápida para comenzar con NEXORA SYNC."),
-            "updates" => ("Actualizaciones", "Consulta las nuevas versiones de NEXORA SYNC."),
-            _ => ("Overview", "Your synchronization workspace at a glance.")
+            "folder" => (_isEnglish ? "Shared folder" : "Carpeta compartida", _isEnglish ? "Choose the local home for your shared files." : "Selecciona la carpeta local de tus archivos compartidos."),
+            "activity" => (_isEnglish ? "Activity" : "Actividad", _isEnglish ? "Track changes and events across your workspace." : "Consulta los cambios y eventos de tu espacio de trabajo."),
+            "devices" => (_isEnglish ? "Devices" : "Dispositivos", _isEnglish ? "Manage the computers connected to your private workspace." : "Administra los equipos conectados a tu espacio privado."),
+            "settings" => (_isEnglish ? "Settings" : "Configuración", _isEnglish ? "Control your connection and local preferences." : "Controla tu conexión y tus preferencias locales."),
+            "guide" => (_isEnglish ? "How to use" : "Cómo utilizarlo", _isEnglish ? "A quick guide to getting started with NEXORA SYNC." : "Una guía rápida para comenzar con NEXORA SYNC."),
+            "updates" => (_isEnglish ? "Updates" : "Actualizaciones", _isEnglish ? "Check for new NEXORA SYNC versions." : "Consulta las nuevas versiones de NEXORA SYNC."),
+            _ => (_isEnglish ? "Overview" : "Resumen", _isEnglish ? "Your synchronization workspace at a glance." : "Tu espacio de sincronización de un vistazo.")
         };
     }
 
