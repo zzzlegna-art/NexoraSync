@@ -25,4 +25,4 @@ Name: "{autodesktop}\NEXORA SYNC"; Filename: "{app}\NexoraSync.exe"; Tasks: desk
 Name: "desktopicon"; Description: "Crear acceso directo en el escritorio"; GroupDescription: "Accesos directos:"; Flags: checkedonce
 
 [Run]
-Filename: "{app}\NexoraSync.exe"; Description: "Abrir NEXORA SYNC"; Flags: postinstall nowait skipifsilent
+Filename: "{app}\NexoraSync.exe"; Description: "Abrir NEXORA SYNC"; Flags: nowait runasoriginaluser
