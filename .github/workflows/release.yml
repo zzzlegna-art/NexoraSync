@@ -1,0 +1,49 @@
+name: Publish NEXORA SYNC release
+on:
+  push:
+    tags:
+      - "v*"
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set release version
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}".TrimStart('v')
+          "APP_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Prepare application icon
+        shell: pwsh
+        run: |
+          $icon = [Convert]::FromBase64String((Get-Content assets/nexora.ico.base64 -Raw).Trim())
+          [System.IO.File]::WriteAllBytes('src/NexoraSync.App/nexora.ico', $icon)
+      - name: Restore
+        run: dotnet restore src/NexoraSync.App/NexoraSync.App.csproj
+      - name: Publish self-contained Windows app
+        run: dotnet publish src/NexoraSync.App/NexoraSync.App.csproj -c Release -r win-x64 --self-contained true -o publish
+      - name: Install Inno Setup
+        run: choco install innosetup --yes --no-progress
+      - name: Build versioned installer
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force artifacts | Out-Null
+          $iss = Get-Content installer/NexoraSync.iss -Raw
+          $iss = $iss -replace 'AppVersion=0.1.7', "AppVersion=$env:APP_VERSION"
+          $iss = $iss -replace 'OutputBaseFilename=NexoraSync-Setup-0.1.7', "OutputBaseFilename=NexoraSync-Setup-$env:APP_VERSION"
+          Set-Content installer/NexoraSync.Release.iss $iss
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer/NexoraSync.Release.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: NEXORA SYNC ${{ github.ref_name }}
+          generate_release_notes: true
+          files: artifacts/NexoraSync-Setup-${{ github.ref_name }}.exe
