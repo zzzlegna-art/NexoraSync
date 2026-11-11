@@ -30,12 +30,16 @@ jobs:
       - name: Build installer
         shell: pwsh
         run: |
+          $version = [xml](Get-Content src/NexoraSync.App/NexoraSync.App.csproj -Raw)
+          $appVersion = $version.Project.PropertyGroup.Version
           New-Item -ItemType Directory -Force artifacts | Out-Null
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer/NexoraSync.iss
+          if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed with exit code $LASTEXITCODE" }
+          "APP_VERSION=$appVersion" | Out-File -FilePath $env:GITHUB_ENV -Append
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NexoraSync-Setup-0.1.9
-          path: artifacts/NexoraSync-Setup-0.1.9.exe
+          name: NexoraSync-Setup-${{ env.APP_VERSION }}
+          path: artifacts/NexoraSync-Setup-${{ env.APP_VERSION }}.exe
           if-no-files-found: error
           retention-days: 30

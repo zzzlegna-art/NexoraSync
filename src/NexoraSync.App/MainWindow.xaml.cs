@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Diagnostics;
 using System.Security.Cryptography;
+using NexoraSync.Sync;
 using Microsoft.Win32;
 
 namespace NexoraSync;
@@ -93,6 +94,7 @@ public partial class MainWindow : Window
     private string? _installerDownloadUrl;
     private string? _installerDigest;
     private string? _latestVersion;
+    private LocalChangeMonitor? _localChangeMonitor;
     private string _selectedFolder = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "NexoraSync", "Shared");
 
@@ -109,6 +111,7 @@ public partial class MainWindow : Window
         FolderStatusSettings.Text = FolderStatus.Text;
         LanguageBox.SelectedIndex = _isEnglish ? 1 : 0;
         ApplyLanguage();
+        StartLocalMonitor();
     }
 
     private string SettingsDirectory => Path.Combine(
@@ -160,6 +163,7 @@ public partial class MainWindow : Window
             });
             FolderStatus.Text = "Folder saved on this computer";
             FolderStatusSettings.Text = FolderStatus.Text;
+            StartLocalMonitor();
             SaveStatus.Text = "Preferences saved successfully.";
         }
         catch (Exception ex) { SaveStatus.Text = "Could not save preferences: " + ex.Message; }
@@ -281,6 +285,51 @@ public partial class MainWindow : Window
             TranslateTree(child);
         }
     }
+
+    private void StartLocalMonitor()
+    {
+        _localChangeMonitor?.Dispose();
+        _localChangeMonitor = null;
+
+        if (!Directory.Exists(_selectedFolder))
+        {
+            UpdateLocalMonitorUi(Array.Empty<PendingFileChange>(), false);
+            return;
+        }
+
+        try
+        {
+            var monitor = new LocalChangeMonitor(_selectedFolder);
+            _localChangeMonitor = monitor;
+            monitor.QueueChanged += changes => Dispatcher.InvokeAsync(
+                () => UpdateLocalMonitorUi(changes, true));
+            monitor.Error += message => Dispatcher.InvokeAsync(() =>
+            {
+                SyncEngineStatusText.Text = (_isEnglish ? "Local queue warning: " : "Aviso de cola local: ") + message;
+            });
+            UpdateLocalMonitorUi(monitor.PendingChanges, true);
+        }
+        catch (Exception ex)
+        {
+            UpdateLocalMonitorUi(Array.Empty<PendingFileChange>(), false);
+            SyncEngineStatusText.Text = (_isEnglish ? "Local monitor could not start: " : "No se pudo iniciar el monitor local: ") + ex.Message;
+        }
+    }
+
+    private void UpdateLocalMonitorUi(IReadOnlyList<PendingFileChange> changes, bool active)
+    {
+        PendingChangesCount.Text = changes.Count.ToString("N0");
+        SyncEngineStatusText.Text = active
+            ? (_isEnglish ? "Local monitor active · waiting for remote server" : "Monitor local activo · esperando servidor remoto")
+            : (_isEnglish ? "Save an existing folder to start local monitoring" : "Guarda una carpeta existente para iniciar el monitor local");
+    }
+
+    private void MainWindow_Closed(object? sender, EventArgs e)
+    {
+        _localChangeMonitor?.Dispose();
+        _localChangeMonitor = null;
+    }
+
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
         // Update checks are intentionally manual so startup never waits on the network.

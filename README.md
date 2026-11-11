@@ -1,24 +1,20 @@
-# NEXORA SYNC 0.1.2
+# NEXORA SYNC 0.2.0
 
-Aplicación de escritorio Windows para validar la experiencia visual y el flujo inicial de configuración.
+Aplicación de escritorio Windows para construir un espacio privado de archivos compartidos entre equipos autorizados.
 
 ## Estado de esta versión
 
-Esta entrega es un **prototipo de interfaz instalable**, no una versión operativa de sincronización en nube. Incluye:
-- Aplicación WPF para Windows x64.
-- Selector de tema oscuro/claro (cambio visual básico).
-- Selección de carpeta local.
-- Guardado local de preferencias.
-- Pipeline de GitHub Actions para compilar un instalador Inno Setup.
+Esta versión incorpora la **primera base del motor local de cambios**:
+- Monitor de cambios de archivos en la carpeta seleccionada.
+- Detección de creación, modificación, eliminación y renombrado.
+- Cola local persistente de cambios pendientes, separada por carpeta.
+- Conservación de la cola entre reinicios de la aplicación.
+- Indicador en el panel principal del número de cambios pendientes.
 
-Aún no incluye sincronización real, servidor remoto, autenticación, transferencia de archivos, resolución de conflictos ni servicio en segundo plano. No usar con datos importantes ni como respaldo.
+## Importante: sincronización remota todavía en desarrollo
 
-## Obtener el instalador
+Esta versión **todavía no transfiere archivos entre computadores**. No incluye servidor remoto operativo, autenticación de dispositivos, transferencia, sincronización bidireccional, resolución de conflictos ni respaldo remoto. La cola local es una base de trabajo para esas siguientes etapas; no debe considerarse una copia de seguridad.
 
-1. Abre la pestaña **Actions** del repositorio.
-2. Selecciona **Build NEXORA SYNC Windows Installer**.
-3. Pulsa **Run workflow** si no se ha iniciado automáticamente.
-4. Espera a que termine correctamente.
-5. Entra al run completado y descarga el artefacto `NexoraSync-Setup-0.1.2`.
+## Compilar
 
-El instalador se compila en un runner Windows de GitHub Actions.
+El workflow de GitHub Actions compila la aplicación WPF para Windows x64 y genera el instalador Inno Setup. El nombre del artefacto se obtiene de la versión declarada en el proyecto.
