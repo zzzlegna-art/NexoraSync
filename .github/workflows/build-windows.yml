@@ -1,0 +1,36 @@
+name: Build NEXORA SYNC Windows Installer
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: write
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore
+        run: dotnet restore src/NexoraSync.App/NexoraSync.App.csproj
+      - name: Publish self-contained Windows app
+        run: dotnet publish src/NexoraSync.App/NexoraSync.App.csproj -c Release -r win-x64 --self-contained true -o publish
+      - name: Install Inno Setup
+        run: choco install innosetup --yes --no-progress
+      - name: Build installer
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force artifacts | Out-Null
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer/NexoraSync.iss
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NexoraSync-Setup-0.1.2
+          path: artifacts/NexoraSync-Setup-0.1.2.exe
+          if-no-files-found: error
+          retention-days: 30
