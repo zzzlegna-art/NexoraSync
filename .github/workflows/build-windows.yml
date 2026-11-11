@@ -36,6 +36,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: NexoraSync-Setup-0.1.7
-          path: artifacts/NexoraSync-Setup-0.1.6.exe
+          path: artifacts/NexoraSync-Setup-0.1.7.exe
           if-no-files-found: error
           retention-days: 30
