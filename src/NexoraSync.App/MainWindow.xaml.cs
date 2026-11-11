@@ -11,6 +11,76 @@ namespace NexoraSync;
 public partial class MainWindow : Window
 {
     private bool _lightTheme;
+    private static readonly Dictionary<string, (string Dark, string Light)> ThemePalette = new()
+    {
+        ["Theme_090E18"] = ("#090E18", "#F3F6FB"),
+        ["Theme_0D1421"] = ("#0D1421", "#FFFFFF"),
+        ["Theme_111C2B"] = ("#111C2B", "#FFFFFF"),
+        ["Theme_152235"] = ("#152235", "#F0F4F9"),
+        ["Theme_233249"] = ("#233249", "#DCE4EE"),
+        ["Theme_8797AE"] = ("#8797AE", "#68788E"),
+        ["Theme_F2F6FC"] = ("#F2F6FC", "#172437"),
+        ["Theme_4C9EFF"] = ("#4C9EFF", "#2678D1"),
+        ["Theme_9AAAC0"] = ("#9AAAC0", "#5B6B80"),
+        ["Theme_192A40"] = ("#192A40", "#EAF2FB"),
+        ["Theme_FFFFFF"] = ("#FFFFFF", "#FFFFFF"),
+        ["Theme_203B5D"] = ("#203B5D", "#DCEBFA"),
+        ["Theme_398BEE"] = ("#398BEE", "#2678D1"),
+        ["Theme_57A2FF"] = ("#57A2FF", "#398BEE"),
+        ["Theme_1B2A3E"] = ("#1B2A3E", "#EDF2F8"),
+        ["Theme_DCE8F8"] = ("#DCE8F8", "#24364C"),
+        ["Theme_0B1421"] = ("#0B1421", "#F4F7FB"),
+        ["Theme_EAF1FB"] = ("#EAF1FB", "#24364C"),
+        ["Theme_2A3B52"] = ("#2A3B52", "#D5DFEA"),
+        ["Theme_1B293B"] = ("#1B293B", "#E2E9F1"),
+        ["Theme_183B62"] = ("#183B62", "#DDEBFA"),
+        ["Theme_2864A1"] = ("#2864A1", "#B9D8F5"),
+        ["Theme_70B8FF"] = ("#70B8FF", "#2678D1"),
+        ["Theme_F4F8FF"] = ("#F4F8FF", "#172437"),
+        ["Theme_60AFFF"] = ("#60AFFF", "#2678D1"),
+        ["Theme_61738C"] = ("#61738C", "#65758B"),
+        ["Theme_172A40"] = ("#172A40", "#E7F0FB"),
+        ["Theme_111F30"] = ("#111F30", "#F4F7FB"),
+        ["Theme_263A53"] = ("#263A53", "#D5DFEA"),
+        ["Theme_6E829C"] = ("#6E829C", "#68788E"),
+        ["Theme_EAF2FD"] = ("#EAF2FD", "#24364C"),
+        ["Theme_8498B2"] = ("#8498B2", "#68788E"),
+        ["Theme_536780"] = ("#536780", "#6D7E93"),
+        ["Theme_D5A85A"] = ("#D5A85A", "#986312"),
+        ["Theme_899BB3"] = ("#899BB3", "#68788E"),
+        ["Theme_172536"] = ("#172536", "#EEF3F9"),
+        ["Theme_2B405A"] = ("#2B405A", "#D5DFEA"),
+        ["Theme_E3B45F"] = ("#E3B45F", "#A36A12"),
+        ["Theme_D7E2F1"] = ("#D7E2F1", "#24364C"),
+        ["Theme_10243A"] = ("#10243A", "#E8F2FC"),
+        ["Theme_234B72"] = ("#234B72", "#BDD9F3"),
+        ["Theme_72B9FF"] = ("#72B9FF", "#2678D1"),
+        ["Theme_A8BED7"] = ("#A8BED7", "#3E526B"),
+        ["Theme_17395A"] = ("#17395A", "#E1EFFC"),
+        ["Theme_2C659B"] = ("#2C659B", "#B8D7F3"),
+        ["Theme_3F91E5"] = ("#3F91E5", "#2678D1"),
+        ["Theme_76B9FF"] = ("#76B9FF", "#2678D1"),
+        ["Theme_D9EEFF"] = ("#D9EEFF", "#1D3854"),
+        ["Theme_8295AF"] = ("#8295AF", "#68788E"),
+        ["Theme_F1F6FD"] = ("#F1F6FD", "#172437"),
+        ["Theme_7D91AA"] = ("#7D91AA", "#68788E"),
+        ["Theme_D9AD61"] = ("#D9AD61", "#986312"),
+        ["Theme_70849F"] = ("#70849F", "#68788E"),
+        ["Theme_8498B1"] = ("#8498B1", "#68788E"),
+        ["Theme_DCE7F5"] = ("#DCE7F5", "#24364C"),
+        ["Theme_7488A2"] = ("#7488A2", "#68788E"),
+        ["Theme_26374D"] = ("#26374D", "#D5DFEA"),
+        ["Theme_778BA5"] = ("#778BA5", "#68788E"),
+        ["Theme_7F93AC"] = ("#7F93AC", "#68788E"),
+        ["Theme_18283C"] = ("#18283C", "#EDF2F8"),
+        ["Theme_D8B16C"] = ("#D8B16C", "#986312"),
+        ["Theme_EAF2FC"] = ("#EAF2FC", "#24364C"),
+        ["Theme_79D8B0"] = ("#79D8B0", "#16845D"),
+        ["Theme_91A4BC"] = ("#91A4BC", "#5B6D83"),
+        ["Theme_352B1D"] = ("#352B1D", "#FFF4DF"),
+        ["Theme_E7C58D"] = ("#E7C58D", "#82591D"),
+        ["Theme_9CB0C9"] = ("#9CB0C9", "#5B6D83"),
+    };
     private bool _isEnglish;
     private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(8) };
     private const string CurrentVersion = "0.1.5";
@@ -21,6 +91,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         LoadPreferences();
+        ApplyTheme(false);
         FolderPath.Text = _selectedFolder;
         FolderPathSettings.Text = _selectedFolder;
         FolderStatus.Text = Directory.Exists(_selectedFolder)
@@ -48,6 +119,7 @@ public partial class MainWindow : Window
             if (values.TryGetValue("server", out var server) && !string.IsNullOrWhiteSpace(server))
                 ServerUrl.Text = server;
             if (values.TryGetValue("language", out var language)) _isEnglish = language.Equals("en", StringComparison.OrdinalIgnoreCase);
+            if (values.TryGetValue("theme", out var theme)) _lightTheme = theme.Equals("light", StringComparison.OrdinalIgnoreCase);
         }
         catch { /* Retain safe defaults if preferences are unreadable. */ }
     }
@@ -73,7 +145,8 @@ public partial class MainWindow : Window
             {
                 $"folder={_selectedFolder}",
                 $"server={ServerUrl.Text.Trim()}",
-                $"language={(_isEnglish ? "en" : "es")}"
+                $"language={(_isEnglish ? "en" : "es")}",
+                $"theme={(_lightTheme ? "light" : "dark")}"
             });
             FolderStatus.Text = "Folder saved on this computer";
             FolderStatusSettings.Text = FolderStatus.Text;
@@ -226,29 +299,38 @@ public partial class MainWindow : Window
     private void ThemeButton_Click(object sender, RoutedEventArgs e)
     {
         _lightTheme = !_lightTheme;
-        AnimateBrush("Page", _lightTheme ? "#F1F5FA" : "#090E18");
-        AnimateBrush("Sidebar", _lightTheme ? "#FFFFFF" : "#0D1421");
-        AnimateBrush("Panel", _lightTheme ? "#FFFFFF" : "#111C2B");
-        AnimateBrush("PanelAlt", _lightTheme ? "#EAF0F7" : "#152235");
-        AnimateBrush("Line", _lightTheme ? "#D8E1EC" : "#233249");
-        AnimateBrush("Muted", _lightTheme ? "#65758B" : "#8797AE");
-        Background = (Brush)FindResource("Page");
-        Root.Background = (Brush)FindResource("Page");
-        ThemeButton.Content = _lightTheme ? (_isEnglish ? "☾   Dark appearance" : "☾   Tema oscuro") : (_isEnglish ? "☼   Light appearance" : "☼   Tema claro");
-    }
-
-    private void AnimateBrush(string key, string color)
-    {
-        if (Resources[key] is SolidColorBrush brush)
+        ApplyTheme(true);
+        try
         {
-            var target = (Color)ColorConverter.ConvertFromString(color);
-            brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation(target, TimeSpan.FromMilliseconds(280)) { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut } });
+            Directory.CreateDirectory(SettingsDirectory);
+            File.WriteAllLines(SettingsFile, new[]
+            {
+                $"folder={_selectedFolder}",
+                $"server={ServerUrl.Text.Trim()}",
+                $"language={(_isEnglish ? "en" : "es")}",
+                $"theme={(_lightTheme ? "light" : "dark")}"
+            });
         }
+        catch { /* Theme changes remain active for this session if preferences cannot be saved. */ }
     }
 
-    private void ChangeBrush(string key, string color)
+    private void ApplyTheme(bool animate)
     {
-        if (Resources[key] is SolidColorBrush brush)
-            brush.Color = (Color)ColorConverter.ConvertFromString(color);
+        foreach (var item in ThemePalette)
+        {
+            if (Resources[item.Key] is not SolidColorBrush brush) continue;
+            var color = (Color)ColorConverter.ConvertFromString(_lightTheme ? item.Value.Light : item.Value.Dark);
+            if (animate)
+                brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation(color, TimeSpan.FromMilliseconds(240))
+                { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut } });
+            else
+                brush.Color = color;
+        }
+
+        Background = (Brush)FindResource("Theme_090E18");
+        Root.Background = (Brush)FindResource("Theme_090E18");
+        ThemeButton.Content = _lightTheme
+            ? (_isEnglish ? "☾   Dark appearance" : "☾   Tema oscuro")
+            : (_isEnglish ? "☼   Light appearance" : "☼   Tema claro");
     }
 }
