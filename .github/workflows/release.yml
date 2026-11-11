@@ -8,7 +8,7 @@ on:
       version:
         description: "Version to publish (for example 0.1.8)"
         required: true
-        default: "0.1.8"
+        default: "0.1.9"
 permissions:
   contents: write
 jobs:
@@ -48,8 +48,8 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force artifacts | Out-Null
           $iss = Get-Content installer/NexoraSync.iss -Raw
-          $iss = $iss -replace 'AppVersion=0.1.8', "AppVersion=$env:APP_VERSION"
-          $iss = $iss -replace 'OutputBaseFilename=NexoraSync-Setup-0.1.8', "OutputBaseFilename=NexoraSync-Setup-$env:APP_VERSION"
+          $iss = $iss -replace 'AppVersion=\\d+\\.\\d+\\.\\d+', "AppVersion=$env:APP_VERSION"
+          $iss = $iss -replace 'OutputBaseFilename=NexoraSync-Setup-\\d+\\.\\d+\\.\\d+', "OutputBaseFilename=NexoraSync-Setup-$env:APP_VERSION"
           Set-Content installer/NexoraSync.Release.iss $iss
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer/NexoraSync.Release.iss
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
