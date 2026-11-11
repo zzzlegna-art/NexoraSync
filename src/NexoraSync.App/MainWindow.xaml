@@ -37,7 +37,7 @@
     <StackPanel>
      <StackPanel Orientation="Horizontal" Margin="4,2,0,34">
       <Border Width="37" Height="37" CornerRadius="11" Background="#183B62" BorderBrush="#2864A1" BorderThickness="1"><TextBlock Text="N" Foreground="#70B8FF" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
-      <StackPanel Margin="11,0,0,0" VerticalAlignment="Center"><TextBlock Text="NEXORA" Foreground="#F4F8FF" FontSize="18" FontWeight="Bold" CharacterSpacing="100"/><TextBlock Text="S Y N C" Foreground="#60AFFF" FontSize="9" FontWeight="Bold" Margin="1,1,0,0"/></StackPanel>
+      <StackPanel Margin="11,0,0,0" VerticalAlignment="Center"><TextBlock Text="NEXORA" Foreground="#F4F8FF" FontSize="18" FontWeight="Bold"/><TextBlock Text="S Y N C" Foreground="#60AFFF" FontSize="9" FontWeight="Bold" Margin="1,1,0,0"/></StackPanel>
      </StackPanel>
      <TextBlock Text="WORKSPACE" Foreground="#61738C" FontSize="9" FontWeight="Bold" Margin="9,0,0,10"/>
      <Button x:Name="NavOverview" Content="◫    Overview" Style="{StaticResource NavButton}" Background="#172A40" Foreground="#FFFFFF" Click="NavOverview_Click"/>
@@ -61,7 +61,7 @@
     <StackPanel DockPanel.Dock="Left"><TextBlock x:Name="PageTitle" Text="Overview" Foreground="#F2F6FC" FontSize="26" FontWeight="SemiBold"/><TextBlock x:Name="PageSubtitle" Text="Your synchronization workspace at a glance." Foreground="#899BB3" FontSize="12" Margin="0,6,0,0"/></StackPanel>
     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
      <Border Background="#172536" BorderBrush="#2B405A" BorderThickness="1" CornerRadius="8" Padding="12,8" Margin="0,0,10,0"><StackPanel Orientation="Horizontal"><Ellipse Width="7" Height="7" Fill="#E3B45F" Margin="0,0,8,0"/><TextBlock Text="Local mode" Foreground="#D7E2F1" FontSize="11" FontWeight="SemiBold"/></StackPanel></Border>
-     <Button Content="☼   Appearance" Style="{StaticResource SecondaryButton}" Click="ThemeButton_Click"/>
+     <Button x:Name="ThemeButton" Content="☼   Appearance" Style="{StaticResource SecondaryButton}" Click="ThemeButton_Click"/>
     </StackPanel>
    </DockPanel>
    <Grid Grid.Row="1">
@@ -69,7 +69,7 @@
      <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
      <Border Background="#10243A" BorderBrush="#234B72" BorderThickness="1" CornerRadius="15" Padding="25" Margin="0,0,0,19">
       <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-       <StackPanel VerticalAlignment="Center"><TextBlock Text="WELCOME TO YOUR PRIVATE CLOUD" Foreground="#72B9FF" FontSize="9" FontWeight="Bold" CharacterSpacing="120"/><TextBlock Text="Everything, connected." Foreground="White" FontSize="25" FontWeight="SemiBold" Margin="0,10,0,5"/><TextBlock Text="A single space for your files across every authorized device." Foreground="#A8BED7" FontSize="12"/><Button Content="Configure shared folder   →" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Left" Margin="0,19,0,0" Click="NavFolder_Click"/></StackPanel>
+       <StackPanel VerticalAlignment="Center"><TextBlock Text="WELCOME TO YOUR PRIVATE CLOUD" Foreground="#72B9FF" FontSize="9" FontWeight="Bold"/><TextBlock Text="Everything, connected." Foreground="White" FontSize="25" FontWeight="SemiBold" Margin="0,10,0,5"/><TextBlock Text="A single space for your files across every authorized device." Foreground="#A8BED7" FontSize="12"/><Button Content="Configure shared folder   →" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Left" Margin="0,19,0,0" Click="NavFolder_Click"/></StackPanel>
        <Border Grid.Column="1" Width="126" Height="126" CornerRadius="63" Background="#17395A" BorderBrush="#2C659B" BorderThickness="1" Margin="25,0,8,0"><Grid><Ellipse Width="82" Height="82" Stroke="#3F91E5" StrokeThickness="1" Opacity=".65"/><Ellipse Width="55" Height="55" Stroke="#76B9FF" StrokeThickness="1.5"/><TextBlock Text="N" Foreground="#D9EEFF" FontSize="36" FontWeight="Light" HorizontalAlignment="Center" VerticalAlignment="Center"/></Grid></Border>
       </Grid>
      </Border>
