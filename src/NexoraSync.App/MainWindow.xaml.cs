@@ -162,14 +162,14 @@ public partial class MainWindow : Window
             ["01 · Elige tu carpeta compartida"] = "01 · Choose your shared folder", ["Selecciona la ubicación local donde guardarás tus archivos."] = "Select the local location where your files will live.",
             ["02 · Configura el servidor"] = "02 · Configure the server", ["Cuando el servicio esté disponible, introduce la dirección del servidor en Configuración."] = "When the service is available, enter the server address in Settings.",
             ["03 · Autoriza tus equipos"] = "03 · Authorize your devices", ["Vincula únicamente los computadores que deban acceder a tus archivos."] = "Only pair computers that should access your files.",
-            ["Actualizaciones"] = "Updates", ["Comprueba si hay una versión más reciente."] = "Check whether a newer version is available.",
+            ["Comprueba si hay una versión más reciente."] = "Check whether a newer version is available.",
             ["VERSIÓN INSTALADA"] = "INSTALLED VERSION", ["Buscar actualizaciones"] = "Check for updates",
             ["La descarga e instalación seguirán siendo manuales en esta versión."] = "Downloading and installing updates will remain manual in this version."
         };
         var reverse = translations.ToDictionary(pair => pair.Value, pair => pair.Key);
         string ConvertText(string value) => _isEnglish
             ? (translations.TryGetValue(value, out var translated) ? translated : value)
-            : (reverse.TryGetValue(value, out var translated) ? translated : value);
+            : (reverse.TryGetValue(value, out var original) ? original : value);
         var count = System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent);
         for (var index = 0; index < count; index++)
         {
