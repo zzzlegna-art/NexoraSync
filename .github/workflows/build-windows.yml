@@ -35,7 +35,7 @@ jobs:
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NexoraSync-Setup-0.1.7
-          path: artifacts/NexoraSync-Setup-0.1.7.exe
+          name: NexoraSync-Setup-0.1.8
+          path: artifacts/NexoraSync-Setup-0.1.8.exe
           if-no-files-found: error
           retention-days: 30
