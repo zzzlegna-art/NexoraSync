@@ -3,6 +3,14 @@
  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
  Title="NEXORA SYNC" Height="720" Width="1120" MinHeight="640" MinWidth="960"
  WindowStartupLocation="CenterScreen" Background="#0B1220">
+ <Window.Resources>
+  <Style x:Key="NavButton" TargetType="Button">
+   <Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#C3D0E0"/>
+   <Setter Property="BorderThickness" Value="0"/><Setter Property="HorizontalContentAlignment" Value="Left"/>
+   <Setter Property="Padding" Value="12,12"/><Setter Property="Margin" Value="0,2,0,2"/>
+   <Setter Property="FontSize" Value="13"/><Setter Property="Cursor" Value="Hand"/>
+  </Style>
+ </Window.Resources>
  <Grid x:Name="Root" Margin="0">
   <Grid.ColumnDefinitions><ColumnDefinition Width="230"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
   <Border Grid.Column="0" Background="#101B2D" Padding="22">
@@ -63,12 +71,4 @@
    </StackPanel>
   </ScrollViewer>
  </Grid>
- <Window.Resources>
-  <Style x:Key="NavButton" TargetType="Button">
-   <Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#C3D0E0"/>
-   <Setter Property="BorderThickness" Value="0"/><Setter Property="HorizontalContentAlignment" Value="Left"/>
-   <Setter Property="Padding" Value="12,12"/><Setter Property="Margin" Value="0,2,0,2"/>
-   <Setter Property="FontSize" Value="13"/><Setter Property="Cursor" Value="Hand"/>
-  </Style>
- </Window.Resources>
 </Window>
