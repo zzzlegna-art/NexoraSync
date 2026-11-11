@@ -86,7 +86,7 @@ public partial class MainWindow : Window
     private bool _isEnglish;
     private string _activePanel = "overview";
     private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(8) };
-    private const string CurrentVersion = "0.1.6";
+    private const string CurrentVersion = "0.1.7";
     private string _selectedFolder = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "NexoraSync", "Shared");
 
@@ -355,7 +355,7 @@ public partial class MainWindow : Window
                 // Remove any previous animation clock before applying the next theme.
                 brush.BeginAnimation(SolidColorBrush.ColorProperty, null);
                 if (animate)
-                    brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation(color, TimeSpan.FromMilliseconds(240))
+                    brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation(color, TimeSpan.FromMilliseconds(650))
                     { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut } });
                 else
                     brush.Color = color;
