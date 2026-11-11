@@ -16,6 +16,11 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
+      - name: Prepare application icon
+        shell: pwsh
+        run: |
+          $icon = [Convert]::FromBase64String((Get-Content assets/nexora.ico.base64 -Raw).Trim())
+          [System.IO.File]::WriteAllBytes('src/NexoraSync.App/nexora.ico', $icon)
       - name: Restore
         run: dotnet restore src/NexoraSync.App/NexoraSync.App.csproj
       - name: Publish self-contained Windows app
