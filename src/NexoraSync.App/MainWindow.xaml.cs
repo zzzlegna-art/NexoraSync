@@ -266,8 +266,7 @@ public partial class MainWindow : Window
             ["Comprueba si hay una versión más reciente."] = "Check whether a newer version is available.",
             ["VERSIÓN INSTALADA"] = "INSTALLED VERSION", ["Buscar actualizaciones"] = "Check for updates",
             ["La descarga e instalación serán automáticas desde aquí."] = "Download and installation will run automatically from here.",
-            ["Descargar e instalar actualización"] = "Download and install update",
-            ["Buscar actualizaciones"] = "Check for updates"
+            ["Descargar e instalar actualización"] = "Download and install update"
         };
         var reverse = translations.ToDictionary(pair => pair.Value, pair => pair.Key);
         string ConvertText(string value) => _isEnglish
@@ -282,7 +281,7 @@ public partial class MainWindow : Window
             TranslateTree(child);
         }
     }
-    private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
         // Update checks are intentionally manual so startup never waits on the network.
     }
