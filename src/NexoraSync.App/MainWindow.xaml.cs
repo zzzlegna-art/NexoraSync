@@ -330,9 +330,19 @@ public partial class MainWindow : Window
             _installerDownloadUrl = asset.GetProperty("browser_download_url").GetString();
             _installerDigest = asset.TryGetProperty("digest", out var digest) ? digest.GetString() : null;
             _latestVersion = tag;
-            UpdateStatus.Text = (_isEnglish ? $"Version {tag} is ready to install." : $"La versión {tag} está lista para instalarse.");
             UpdateNowButton.Content = _isEnglish ? "Download and install update" : "Descargar e instalar actualización";
             UpdateNowButton.Visibility = Visibility.Visible;
+
+            var answer = MessageBox.Show(this,
+                _isEnglish
+                    ? $"NEXORA SYNC {_latestVersion} is available. Your current version is {CurrentVersion}.\\n\\nDo you want to download the update now?"
+                    : $"Hay una nueva versión de NEXORA SYNC ({_latestVersion}). Tu versión actual es {CurrentVersion}.\\n\\n¿Deseas descargar la actualización ahora?",
+                _isEnglish ? "Update available" : "Actualización disponible",
+                MessageBoxButton.YesNo, MessageBoxImage.Information);
+            if (answer == MessageBoxResult.Yes)
+                await DownloadAndInstallUpdateAsync();
+            else
+                UpdateStatus.Text = _isEnglish ? "Update postponed. You can install it whenever you want." : "Actualización pospuesta. Puedes instalarla cuando quieras.";
         }
         catch (Exception ex)
         {
@@ -342,6 +352,11 @@ public partial class MainWindow : Window
     }
 
     private async void UpdateNow_Click(object sender, RoutedEventArgs e)
+    {
+        await DownloadAndInstallUpdateAsync();
+    }
+
+    private async Task DownloadAndInstallUpdateAsync()
     {
         if (string.IsNullOrWhiteSpace(_installerDownloadUrl) || string.IsNullOrWhiteSpace(_latestVersion)) return;
 
@@ -387,6 +402,23 @@ public partial class MainWindow : Window
                 var actualHash = Convert.ToHexString(await SHA256.HashDataAsync(file)).ToLowerInvariant();
                 if (!actualHash.Equals(expectedDigest["sha256:".Length..], StringComparison.OrdinalIgnoreCase))
                     throw new InvalidDataException(_isEnglish ? "The installer integrity check failed." : "Falló la verificación de integridad del instalador.");
+            }
+
+            var installAnswer = MessageBox.Show(this,
+                _isEnglish
+                    ? $"The update to version {_latestVersion} has been downloaded and verified. NEXORA SYNC must close to install it. Continue?"
+                    : $"La actualización a la versión {_latestVersion} se descargó y verificó correctamente. NEXORA SYNC debe cerrarse para instalarla. ¿Deseas continuar?",
+                _isEnglish ? "Ready to install" : "Lista para instalar",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (installAnswer != MessageBoxResult.Yes)
+            {
+                UpdateStatus.Text = _isEnglish ? "Installation cancelled. The current version has not been changed." : "Instalación cancelada. La versión actual no se ha modificado.";
+                UpdateProgress.Visibility = Visibility.Collapsed;
+                UpdateNowButton.IsEnabled = true;
+                CheckUpdatesButton.IsEnabled = true;
+                try { if (File.Exists(installerPath)) File.Delete(installerPath); } catch { }
+                return;
             }
 
             UpdateStatus.Text = _isEnglish ? "Starting installer..." : "Iniciando instalador...";
