@@ -83,6 +83,7 @@ public partial class MainWindow : Window
         ["Theme_NavHoverText"] = ("#FFFFFF", "#172437"),
     };
     private bool _isEnglish;
+    private string _activePanel = "overview";
     private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(8) };
     private const string CurrentVersion = "0.1.5";
     private string _selectedFolder = Path.Combine(
@@ -158,6 +159,8 @@ public partial class MainWindow : Window
 
     private void ShowPanel(string name)
     {
+        _activePanel = name;
+        UpdateNavigationState();
         OverviewPanel.Visibility = name == "overview" ? Visibility.Visible : Visibility.Collapsed;
         FolderPanel.Visibility = name == "folder" ? Visibility.Visible : Visibility.Collapsed;
         ActivityPanel.Visibility = name == "activity" ? Visibility.Visible : Visibility.Collapsed;
@@ -175,6 +178,22 @@ public partial class MainWindow : Window
             "updates" => (_isEnglish ? "Updates" : "Actualizaciones", _isEnglish ? "Check for new NEXORA SYNC versions." : "Consulta las nuevas versiones de NEXORA SYNC."),
             _ => (_isEnglish ? "Overview" : "Resumen", _isEnglish ? "Your synchronization workspace at a glance." : "Tu espacio de sincronización de un vistazo.")
         };
+    }
+
+    private void UpdateNavigationState()
+    {
+        var buttons = new Dictionary<string, System.Windows.Controls.Button>
+        {
+            ["overview"] = NavOverview, ["folder"] = NavFolder, ["activity"] = NavActivity,
+            ["devices"] = NavDevices, ["settings"] = NavSettings, ["guide"] = NavGuide, ["updates"] = NavUpdates
+        };
+        foreach (var item in buttons)
+        {
+            item.Value.Background = item.Key == _activePanel
+                ? (Brush)FindResource("Theme_172A40") : Brushes.Transparent;
+            item.Value.Foreground = item.Key == _activePanel
+                ? (Brush)FindResource("Theme_NavSelectedText") : (Brush)FindResource("Theme_9AAAC0");
+        }
     }
 
     private void NavOverview_Click(object sender, RoutedEventArgs e) => ShowPanel("overview");
@@ -330,6 +349,7 @@ public partial class MainWindow : Window
 
         Background = (Brush)FindResource("Theme_090E18");
         Root.Background = (Brush)FindResource("Theme_090E18");
+        UpdateNavigationState();
         ThemeButton.Content = _lightTheme
             ? (_isEnglish ? "☾   Dark appearance" : "☾   Tema oscuro")
             : (_isEnglish ? "☼   Light appearance" : "☼   Tema claro");
