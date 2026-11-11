@@ -335,8 +335,8 @@ public partial class MainWindow : Window
 
             var answer = MessageBox.Show(this,
                 _isEnglish
-                    ? $"NEXORA SYNC {_latestVersion} is available. Your current version is {CurrentVersion}.\\n\\nDo you want to download the update now?"
-                    : $"Hay una nueva versión de NEXORA SYNC ({_latestVersion}). Tu versión actual es {CurrentVersion}.\\n\\n¿Deseas descargar la actualización ahora?",
+                    ? $"NEXORA SYNC {_latestVersion} is available. Your current version is {CurrentVersion}.\n\nDo you want to download the update now?"
+                    : $"Hay una nueva versión de NEXORA SYNC ({_latestVersion}). Tu versión actual es {CurrentVersion}.\n\n¿Deseas descargar la actualización ahora?",
                 _isEnglish ? "Update available" : "Actualización disponible",
                 MessageBoxButton.YesNo, MessageBoxImage.Information);
             if (answer == MessageBoxResult.Yes)
