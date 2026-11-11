@@ -1,6 +1,9 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Net.Http;
+using System.Text.Json;
 using Microsoft.Win32;
 
 namespace NexoraSync;
@@ -8,6 +11,9 @@ namespace NexoraSync;
 public partial class MainWindow : Window
 {
     private bool _lightTheme;
+    private bool _isEnglish;
+    private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(8) };
+    private const string CurrentVersion = "0.1.5";
     private string _selectedFolder = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "NexoraSync", "Shared");
 
@@ -20,6 +26,8 @@ public partial class MainWindow : Window
         FolderStatus.Text = Directory.Exists(_selectedFolder)
             ? "Folder available on this PC" : "Choose or create your shared folder";
         FolderStatusSettings.Text = FolderStatus.Text;
+        LanguageBox.SelectedIndex = _isEnglish ? 1 : 0;
+        ApplyLanguage();
     }
 
     private string SettingsDirectory => Path.Combine(
@@ -39,6 +47,7 @@ public partial class MainWindow : Window
                 _selectedFolder = folder;
             if (values.TryGetValue("server", out var server) && !string.IsNullOrWhiteSpace(server))
                 ServerUrl.Text = server;
+            if (values.TryGetValue("language", out var language)) _isEnglish = language.Equals("en", StringComparison.OrdinalIgnoreCase);
         }
         catch { /* Retain safe defaults if preferences are unreadable. */ }
     }
@@ -63,7 +72,8 @@ public partial class MainWindow : Window
             File.WriteAllLines(SettingsFile, new[]
             {
                 $"folder={_selectedFolder}",
-                $"server={ServerUrl.Text.Trim()}"
+                $"server={ServerUrl.Text.Trim()}",
+                $"language={(_isEnglish ? "en" : "es")}"
             });
             FolderStatus.Text = "Folder saved on this computer";
             FolderStatusSettings.Text = FolderStatus.Text;
@@ -79,12 +89,16 @@ public partial class MainWindow : Window
         ActivityPanel.Visibility = name == "activity" ? Visibility.Visible : Visibility.Collapsed;
         DevicesPanel.Visibility = name == "devices" ? Visibility.Visible : Visibility.Collapsed;
         SettingsPanel.Visibility = name == "settings" ? Visibility.Visible : Visibility.Collapsed;
+        GuidePanel.Visibility = name == "guide" ? Visibility.Visible : Visibility.Collapsed;
+        UpdatesPanel.Visibility = name == "updates" ? Visibility.Visible : Visibility.Collapsed;
         (PageTitle.Text, PageSubtitle.Text) = name switch
         {
             "folder" => ("Shared folder", "Choose the local home for your shared files."),
             "activity" => ("Activity", "Track changes and events across your workspace."),
             "devices" => ("Devices", "Manage the computers connected to your private workspace."),
-            "settings" => ("Settings", "Control your connection and local preferences."),
+            "settings" => ("Configuración", "Controla tu conexión y tus preferencias locales."),
+            "guide" => ("Cómo utilizarlo", "Una guía rápida para comenzar con NEXORA SYNC."),
+            "updates" => ("Actualizaciones", "Consulta las nuevas versiones de NEXORA SYNC."),
             _ => ("Overview", "Your synchronization workspace at a glance.")
         };
     }
@@ -94,19 +108,72 @@ public partial class MainWindow : Window
     private void NavActivity_Click(object sender, RoutedEventArgs e) => ShowPanel("activity");
     private void NavDevices_Click(object sender, RoutedEventArgs e) => ShowPanel("devices");
     private void NavSettings_Click(object sender, RoutedEventArgs e) => ShowPanel("settings");
+    private void NavGuide_Click(object sender, RoutedEventArgs e) => ShowPanel("guide");
+    private void NavUpdates_Click(object sender, RoutedEventArgs e) => ShowPanel("updates");
+    private void LanguageBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        if (LanguageBox.SelectedIndex < 0) return;
+        _isEnglish = LanguageBox.SelectedIndex == 1;
+        ApplyLanguage();
+    }
+    private void ApplyLanguage()
+    {
+        if (PageTitle == null) return;
+        NavOverview.Content = _isEnglish ? "◫    Overview" : "◫    Resumen";
+        NavFolder.Content = _isEnglish ? "▣    Shared folder" : "▣    Carpeta compartida";
+        NavActivity.Content = _isEnglish ? "◷    Activity" : "◷    Actividad";
+        NavDevices.Content = _isEnglish ? "▤    Devices" : "▤    Dispositivos";
+        NavSettings.Content = _isEnglish ? "⚙    Settings" : "⚙    Configuración";
+        NavGuide.Content = _isEnglish ? "ⓘ    How to use" : "ⓘ    Cómo utilizarlo";
+        NavUpdates.Content = _isEnglish ? "↻    Updates" : "↻    Actualizaciones";
+        ThemeButton.Content = _lightTheme ? (_isEnglish ? "☾   Dark appearance" : "☾   Tema oscuro") : (_isEnglish ? "☼   Light appearance" : "☼   Tema claro");
+    }
+    private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
+    {
+        CheckUpdatesButton.IsEnabled = false;
+        UpdateStatus.Text = _isEnglish ? "Checking official releases..." : "Consultando versiones oficiales...";
+        try
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Get, "https://api.github.com/repos/zzzlegna-art/NexoraSync/releases/latest");
+            request.Headers.UserAgent.ParseAdd("NexoraSync-Updater/0.1.5");
+            using var response = await Http.SendAsync(request);
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { UpdateStatus.Text = _isEnglish ? "No published release is available yet." : "Aún no hay una versión publicada."; return; }
+            response.EnsureSuccessStatusCode();
+            using var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+            var tag = json.RootElement.GetProperty("tag_name").GetString()?.TrimStart('v') ?? CurrentVersion;
+            var url = json.RootElement.GetProperty("html_url").GetString();
+            if (Version.TryParse(tag, out var latest) && Version.TryParse(CurrentVersion, out var current) && latest > current)
+            {
+                UpdateStatus.Text = (_isEnglish ? "New version available: " : "Nueva versión disponible: ") + tag;
+                if (!string.IsNullOrWhiteSpace(url)) System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
+            }
+            else UpdateStatus.Text = _isEnglish ? "You already have the latest published version." : "Ya tienes la última versión publicada.";
+        }
+        catch { UpdateStatus.Text = _isEnglish ? "Could not check for updates. Check your internet connection." : "No se pudieron consultar actualizaciones. Verifica tu conexión."; }
+        finally { CheckUpdatesButton.IsEnabled = true; }
+    }
 
     private void ThemeButton_Click(object sender, RoutedEventArgs e)
     {
         _lightTheme = !_lightTheme;
-        ChangeBrush("Page", _lightTheme ? "#F1F5FA" : "#090E18");
-        ChangeBrush("Sidebar", _lightTheme ? "#FFFFFF" : "#0D1421");
-        ChangeBrush("Panel", _lightTheme ? "#FFFFFF" : "#111C2B");
-        ChangeBrush("PanelAlt", _lightTheme ? "#EAF0F7" : "#152235");
-        ChangeBrush("Line", _lightTheme ? "#D8E1EC" : "#233249");
-        ChangeBrush("Muted", _lightTheme ? "#65758B" : "#8797AE");
+        AnimateBrush("Page", _lightTheme ? "#F1F5FA" : "#090E18");
+        AnimateBrush("Sidebar", _lightTheme ? "#FFFFFF" : "#0D1421");
+        AnimateBrush("Panel", _lightTheme ? "#FFFFFF" : "#111C2B");
+        AnimateBrush("PanelAlt", _lightTheme ? "#EAF0F7" : "#152235");
+        AnimateBrush("Line", _lightTheme ? "#D8E1EC" : "#233249");
+        AnimateBrush("Muted", _lightTheme ? "#65758B" : "#8797AE");
         Background = (Brush)FindResource("Page");
         Root.Background = (Brush)FindResource("Page");
-        ThemeButton.Content = _lightTheme ? "☾   Dark appearance" : "☼   Light appearance";
+        ThemeButton.Content = _lightTheme ? (_isEnglish ? "☾   Dark appearance" : "☾   Tema oscuro") : (_isEnglish ? "☼   Light appearance" : "☼   Tema claro");
+    }
+
+    private void AnimateBrush(string key, string color)
+    {
+        if (Resources[key] is SolidColorBrush brush)
+        {
+            var target = (Color)ColorConverter.ConvertFromString(color);
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation(target, TimeSpan.FromMilliseconds(280)) { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut } });
+        }
     }
 
     private void ChangeBrush(string key, string color)
