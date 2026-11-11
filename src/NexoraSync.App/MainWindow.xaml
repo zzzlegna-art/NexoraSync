@@ -142,7 +142,7 @@
      <Border Background="{DynamicResource Theme_111F30}" BorderBrush="{DynamicResource Theme_263A53}" BorderThickness="1" CornerRadius="11" Padding="13" Margin="0,0,0,15">
       <StackPanel><TextBlock Text="NEXORA PROTOCOL" Foreground="{DynamicResource Theme_6E829C}" FontSize="9" FontWeight="Bold"/><TextBlock Text="Your files. In sync." Foreground="{DynamicResource Theme_EAF2FD}" FontSize="13" FontWeight="SemiBold" Margin="0,7,0,3"/><TextBlock Text="Private, reliable and always yours." Foreground="{DynamicResource Theme_8498B2}" FontSize="10" TextWrapping="Wrap"/></StackPanel>
      </Border>
-     <DockPanel><TextBlock Text="VERSION 0.1.5" Foreground="{DynamicResource Theme_536780}" FontSize="9" FontWeight="Bold"/><TextBlock Text="● LOCAL PREVIEW" Foreground="{DynamicResource Theme_D5A85A}" FontSize="9" FontWeight="Bold" HorizontalAlignment="Right"/></DockPanel>
+     <DockPanel><TextBlock Text="VERSION 0.1.6" Foreground="{DynamicResource Theme_536780}" FontSize="9" FontWeight="Bold"/><TextBlock Text="● LOCAL PREVIEW" Foreground="{DynamicResource Theme_D5A85A}" FontSize="9" FontWeight="Bold" HorizontalAlignment="Right"/></DockPanel>
     </StackPanel>
    </Grid>
   </Border>
