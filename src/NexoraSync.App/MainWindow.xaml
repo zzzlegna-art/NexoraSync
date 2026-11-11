@@ -27,7 +27,7 @@
     <StackPanel DockPanel.Dock="Bottom">
      <TextBlock Text="CONFIGURACIÓN" Foreground="#71839D" FontSize="10" Margin="0,0,0,10"/>
      <Button x:Name="ThemeButton" Content="☼   Cambiar a modo claro" Click="ThemeButton_Click" Style="{StaticResource NavButton}"/>
-     <TextBlock Text="NEXORA SYNC 0.1.2" Foreground="#71839D" FontSize="10" Margin="0,18,0,0"/>
+     <TextBlock Text="NEXORA SYNC 0.1.3" Foreground="#71839D" FontSize="10" Margin="0,18,0,0"/>
     </StackPanel>
    </DockPanel>
   </Border>
