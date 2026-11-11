@@ -127,6 +127,58 @@ public partial class MainWindow : Window
         NavGuide.Content = _isEnglish ? "ⓘ    How to use" : "ⓘ    Cómo utilizarlo";
         NavUpdates.Content = _isEnglish ? "↻    Updates" : "↻    Actualizaciones";
         ThemeButton.Content = _lightTheme ? (_isEnglish ? "☾   Dark appearance" : "☾   Tema oscuro") : (_isEnglish ? "☼   Light appearance" : "☼   Tema claro");
+        TranslateTree(Root);
+    }
+
+    private void TranslateTree(DependencyObject parent)
+    {
+        var translations = new Dictionary<string, string>
+        {
+            ["Carpeta compartida"] = "Shared folder", ["Actividad"] = "Activity", ["Dispositivos"] = "Devices",
+            ["Configuración"] = "Settings", ["Resumen"] = "Overview", ["Cómo utilizarlo"] = "How to use",
+            ["Actualizaciones"] = "Updates", ["ESPACIO DE TRABAJO"] = "WORKSPACE", ["PREFERENCIAS"] = "PREFERENCES",
+            ["BIENVENIDO A TU NUBE PRIVADA"] = "WELCOME TO YOUR PRIVATE CLOUD", ["Todo conectado."] = "Everything, connected.",
+            ["Un solo espacio para tus archivos en todos tus dispositivos autorizados."] = "A single space for your files across every authorized device.",
+            ["Configurar carpeta compartida   →"] = "Configure shared folder   →", ["DISPOSITIVOS CONECTADOS"] = "CONNECTED DEVICES",
+            ["Solo este equipo"] = "This computer only", ["CAMBIOS PENDIENTES"] = "PENDING CHANGES",
+            ["Motor de sincronización sin conectar"] = "Sync engine not connected", ["ESTADO DE SINCRONIZACIÓN"] = "SYNC STATUS",
+            ["Esperando configuración del servidor"] = "Waiting for server setup", ["Actividad reciente"] = "Recent activity",
+            ["Los eventos de tu espacio aparecerán aquí."] = "Your workspace events will appear here.",
+            ["Esperando configuración"] = "Waiting for setup", ["Aún no hay actividad de sincronización"] = "No sync activity yet",
+            ["Tu espacio compartido"] = "Your shared workspace", ["Selecciona la carpeta local que compartirás con tus dispositivos NEXORA autorizados."] = "Select the local folder that will be shared with your authorized NEXORA devices.",
+            ["CARPETA LOCAL"] = "LOCAL FOLDER", ["Explorar carpeta"] = "Browse folder", ["Elegir carpeta"] = "Choose folder",
+            ["Guardar preferencias de carpeta"] = "Save folder preferences", ["Centro de actividad"] = "Activity center",
+            ["Dispositivos autorizados"] = "Authorized devices", ["Administra los equipos que pueden acceder a tu espacio compartido."] = "Manage computers that can access your shared workspace.",
+            ["Este equipo"] = "This computer", ["Preferencias"] = "Preferences", ["Personaliza tu experiencia con NEXORA SYNC."] = "Personalize your NEXORA SYNC experience.",
+            ["DIRECCIÓN DEL SERVIDOR"] = "SERVER ADDRESS", ["Guardar preferencias locales"] = "Save local preferences",
+            ["Tu espacio de sincronización de un vistazo."] = "Your synchronization workspace at a glance.",
+            ["Selecciona la carpeta local de tus archivos compartidos."] = "Choose the local home for your shared files.",
+            ["Consulta los cambios y eventos de tu espacio de trabajo."] = "Track changes and events across your workspace.",
+            ["Administra los equipos conectados a tu espacio privado."] = "Manage the computers connected to your private workspace.",
+            ["Controla tu conexión y tus preferencias locales."] = "Control your connection and local preferences.",
+            ["Una guía rápida para comenzar con NEXORA SYNC."] = "A quick guide to getting started with NEXORA SYNC.",
+            ["Consulta las nuevas versiones de NEXORA SYNC."] = "Check for new NEXORA SYNC versions.",
+            ["Primeros pasos con NEXORA"] = "Getting started with NEXORA", ["Configura tu espacio de trabajo en tres pasos."] = "Set up your workspace in three steps.",
+            ["01 · Elige tu carpeta compartida"] = "01 · Choose your shared folder", ["Selecciona la ubicación local donde guardarás tus archivos."] = "Select the local location where your files will live.",
+            ["02 · Configura el servidor"] = "02 · Configure the server", ["Cuando el servicio esté disponible, introduce la dirección del servidor en Configuración."] = "When the service is available, enter the server address in Settings.",
+            ["03 · Autoriza tus equipos"] = "03 · Authorize your devices", ["Vincula únicamente los computadores que deban acceder a tus archivos."] = "Only pair computers that should access your files.",
+            ["Actualizaciones"] = "Updates", ["Comprueba si hay una versión más reciente."] = "Check whether a newer version is available.",
+            ["VERSIÓN INSTALADA"] = "INSTALLED VERSION", ["Buscar actualizaciones"] = "Check for updates",
+            ["La descarga e instalación seguirán siendo manuales en esta versión."] = "Downloading and installing updates will remain manual in this version."
+        };
+        var reverse = translations.ToDictionary(pair => pair.Value, pair => pair.Key);
+        string ConvertText(string value) => _isEnglish
+            ? (translations.TryGetValue(value, out var translated) ? translated : value)
+            : (reverse.TryGetValue(value, out var translated) ? translated : value);
+        var count = System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent);
+        for (var index = 0; index < count; index++)
+        {
+            var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, index);
+            if (child is System.Windows.Controls.TextBlock textBlock) textBlock.Text = ConvertText(textBlock.Text);
+            else if (child is System.Windows.Controls.Button button && button.Content is string content) button.Content = ConvertText(content);
+            TranslateTree(child);
+        }
+    }
     }
     private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
