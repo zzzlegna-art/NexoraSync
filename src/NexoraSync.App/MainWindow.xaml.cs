@@ -86,7 +86,7 @@ public partial class MainWindow : Window
     private bool _isEnglish;
     private string _activePanel = "overview";
     private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(8) };
-    private const string CurrentVersion = "0.1.5";
+    private const string CurrentVersion = "0.1.6";
     private string _selectedFolder = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "NexoraSync", "Shared");
 
@@ -340,12 +340,39 @@ public partial class MainWindow : Window
         foreach (var item in ThemePalette)
         {
             if (Resources[item.Key] is not SolidColorBrush brush) continue;
+
+            // WPF may freeze brushes stored in resource dictionaries. Clone them
+            // before changing or animating so a theme switch cannot crash the app.
+            if (brush.IsFrozen)
+            {
+                brush = brush.Clone();
+                Resources[item.Key] = brush;
+            }
+
             var color = (Color)ColorConverter.ConvertFromString(_lightTheme ? item.Value.Light : item.Value.Dark);
-            if (animate)
-                brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation(color, TimeSpan.FromMilliseconds(240))
-                { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut } });
-            else
-                brush.Color = color;
+            try
+            {
+                // Remove any previous animation clock before applying the next theme.
+                brush.BeginAnimation(SolidColorBrush.ColorProperty, null);
+                if (animate)
+                    brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation(color, TimeSpan.FromMilliseconds(240))
+                    { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut } });
+                else
+                    brush.Color = color;
+            }
+            catch
+            {
+                // A visual transition is optional; applying the final color is not.
+                try
+                {
+                    brush.BeginAnimation(SolidColorBrush.ColorProperty, null);
+                    brush.Color = color;
+                }
+                catch
+                {
+                    Resources[item.Key] = new SolidColorBrush(color);
+                }
+            }
         }
 
         Background = (Brush)FindResource("Theme_090E18");
