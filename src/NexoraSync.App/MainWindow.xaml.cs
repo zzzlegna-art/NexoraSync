@@ -179,7 +179,6 @@ public partial class MainWindow : Window
             TranslateTree(child);
         }
     }
-    }
     private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
         try
