@@ -128,6 +128,25 @@ public partial class MainWindow : Window
         NavUpdates.Content = _isEnglish ? "↻    Updates" : "↻    Actualizaciones";
         ThemeButton.Content = _lightTheme ? (_isEnglish ? "☾   Dark appearance" : "☾   Tema oscuro") : (_isEnglish ? "☼   Light appearance" : "☼   Tema claro");
     }
+    private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Get, "https://api.github.com/repos/zzzlegna-art/NexoraSync/releases/latest");
+            request.Headers.UserAgent.ParseAdd("NexoraSync-Updater/0.1.5");
+            using var response = await Http.SendAsync(request);
+            if (!response.IsSuccessStatusCode) return;
+            using var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+            var tag = json.RootElement.GetProperty("tag_name").GetString()?.TrimStart('v');
+            if (Version.TryParse(tag, out var latest) && Version.TryParse(CurrentVersion, out var current) && latest > current)
+            {
+                UpdateStatus.Text = (_isEnglish ? "New version available: " : "Hay una nueva versión disponible: ") + tag;
+                MessageBox.Show((_isEnglish ? "A new NEXORA SYNC version is available: " : "Hay una nueva versión de NEXORA SYNC disponible: ") + tag, "NEXORA SYNC", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        catch { /* Update checks are optional and must never block startup. */ }
+    }
+
     private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
     {
         CheckUpdatesButton.IsEnabled = false;
