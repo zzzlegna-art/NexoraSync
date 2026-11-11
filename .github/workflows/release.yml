@@ -3,6 +3,12 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish (for example 0.1.8)"
+        required: true
+        default: "0.1.8"
 permissions:
   contents: write
 jobs:
@@ -14,7 +20,7 @@ jobs:
       - name: Set release version
         shell: pwsh
         run: |
-          $version = "${{ github.ref_name }}".TrimStart('v')
+          $version = if ($env:GITHUB_EVENT_NAME -eq 'workflow_dispatch') { "${{ inputs.version }}" } else { "${{ github.ref_name }}".TrimStart('v') }
           if ($version -notmatch '^\d+\.\d+\.\d+$') { throw "Release tag must look like v1.2.3" }
           $project = 'src/NexoraSync.App/NexoraSync.App.csproj'
           [xml]$xml = Get-Content $project
@@ -50,6 +56,7 @@ jobs:
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: NEXORA SYNC ${{ github.ref_name }}
+          name: NEXORA SYNC v${{ env.APP_VERSION }}
+          tag_name: v${{ env.APP_VERSION }}
           generate_release_notes: true
           files: artifacts/NexoraSync-Setup-*.exe
