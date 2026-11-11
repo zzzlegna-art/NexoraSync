@@ -1,0 +1,74 @@
+<Window x:Class="NexoraSync.MainWindow"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Title="NEXORA SYNC" Height="720" Width="1120" MinHeight="640" MinWidth="960"
+ WindowStartupLocation="CenterScreen" Background="#0B1220">
+ <Grid x:Name="Root" Margin="0">
+  <Grid.ColumnDefinitions><ColumnDefinition Width="230"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+  <Border Grid.Column="0" Background="#101B2D" Padding="22">
+   <DockPanel>
+    <StackPanel DockPanel.Dock="Top">
+     <TextBlock Text="NEXORA" Foreground="White" FontSize="24" FontWeight="Bold"/>
+     <TextBlock Text="SYNC" Foreground="#55A6FF" FontSize="15" FontWeight="SemiBold" Margin="2,0,0,30"/>
+     <TextBlock Text="ESPACIO DE TRABAJO" Foreground="#71839D" FontSize="10" Margin="0,0,0,14"/>
+     <Button Content="▦   Resumen" Style="{StaticResource NavButton}"/>
+     <Button Content="▣   Carpeta compartida" Style="{StaticResource NavButton}"/>
+     <Button Content="▤   Actividad" Style="{StaticResource NavButton}"/>
+     <Button Content="▥   Dispositivos" Style="{StaticResource NavButton}"/>
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Bottom">
+     <TextBlock Text="CONFIGURACIÓN" Foreground="#71839D" FontSize="10" Margin="0,0,0,10"/>
+     <Button x:Name="ThemeButton" Content="☼   Cambiar a modo claro" Click="ThemeButton_Click" Style="{StaticResource NavButton}"/>
+     <TextBlock Text="NEXORA SYNC 0.1.2" Foreground="#71839D" FontSize="10" Margin="0,18,0,0"/>
+    </StackPanel>
+   </DockPanel>
+  </Border>
+  <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+   <StackPanel Margin="34">
+    <DockPanel Margin="0,0,0,28">
+     <StackPanel>
+      <TextBlock Text="Panel de sincronización" Foreground="White" FontSize="27" FontWeight="SemiBold"/>
+      <TextBlock Text="Controla tus archivos y dispositivos desde un solo lugar." Foreground="#93A4BB" FontSize="13" Margin="0,7,0,0"/>
+     </StackPanel>
+     <Border Background="#173B32" CornerRadius="14" Padding="12,7" VerticalAlignment="Center">
+      <TextBlock Text="●  PROTOTIPO LOCAL" Foreground="#6DE0B2" FontSize="11" FontWeight="SemiBold"/>
+     </Border>
+    </DockPanel>
+    <UniformGrid Columns="3" Margin="0,0,0,22">
+     <Border Background="#142238" CornerRadius="12" Padding="18" Margin="0,0,12,0"><StackPanel><TextBlock Text="Dispositivos" Foreground="#93A4BB"/><TextBlock Text="1" Foreground="White" FontSize="30" FontWeight="Bold" Margin="0,8,0,0"/><TextBlock Text="Este equipo" Foreground="#55A6FF" FontSize="11"/></StackPanel></Border>
+     <Border Background="#142238" CornerRadius="12" Padding="18" Margin="0,0,12,0"><StackPanel><TextBlock Text="Archivos pendientes" Foreground="#93A4BB"/><TextBlock Text="—" Foreground="White" FontSize="30" FontWeight="Bold" Margin="0,8,0,0"/><TextBlock Text="Motor de sincronización por conectar" Foreground="#E5B65C" FontSize="11"/></StackPanel></Border>
+     <Border Background="#142238" CornerRadius="12" Padding="18"><StackPanel><TextBlock Text="Estado" Foreground="#93A4BB"/><TextBlock Text="Local" Foreground="White" FontSize="30" FontWeight="Bold" Margin="0,8,0,0"/><TextBlock Text="Servidor remoto no configurado" Foreground="#E5B65C" FontSize="11"/></StackPanel></Border>
+    </UniformGrid>
+    <Border Background="#142238" CornerRadius="14" Padding="22" Margin="0,0,0,18">
+     <StackPanel>
+      <TextBlock Text="Carpeta compartida" Foreground="White" FontSize="18" FontWeight="SemiBold"/>
+      <TextBlock Text="Selecciona la carpeta local que se utilizará cuando conectemos el servicio de sincronización." Foreground="#93A4BB" TextWrapping="Wrap" Margin="0,8,0,15"/>
+      <DockPanel>
+       <Button DockPanel.Dock="Right" Content="Examinar..." Padding="18,10" Margin="12,0,0,0" Click="BrowseFolder_Click"/>
+       <TextBox x:Name="FolderPath" Text="C:\NexoraSync\Compartido" Padding="12" FontSize="13" Background="#0B1627" Foreground="White" BorderBrush="#30435D" VerticalContentAlignment="Center"/>
+      </DockPanel>
+      <TextBlock x:Name="FolderStatus" Text="La carpeta se guardará como preferencia local." Foreground="#93A4BB" FontSize="11" Margin="0,10,0,0"/>
+     </StackPanel>
+    </Border>
+    <Border Background="#142238" CornerRadius="14" Padding="22">
+     <StackPanel>
+      <TextBlock Text="Conexión del servidor" Foreground="White" FontSize="18" FontWeight="SemiBold"/>
+      <TextBlock Text="Dirección del servidor NEXORA SYNC" Foreground="#93A4BB" Margin="0,14,0,7"/>
+      <TextBox x:Name="ServerUrl" Text="https://" Padding="12" Background="#0B1627" Foreground="White" BorderBrush="#30435D"/>
+      <TextBlock Text="La conexión remota y la sincronización automática aún no están habilitadas en esta versión de prueba." Foreground="#E5B65C" TextWrapping="Wrap" Margin="0,12,0,14"/>
+      <Button Content="Guardar preferencias locales" HorizontalAlignment="Left" Padding="18,10" Click="Save_Click"/>
+      <TextBlock x:Name="SaveStatus" Foreground="#6DE0B2" Margin="0,12,0,0"/>
+     </StackPanel>
+    </Border>
+   </StackPanel>
+  </ScrollViewer>
+ </Grid>
+ <Window.Resources>
+  <Style x:Key="NavButton" TargetType="Button">
+   <Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#C3D0E0"/>
+   <Setter Property="BorderThickness" Value="0"/><Setter Property="HorizontalContentAlignment" Value="Left"/>
+   <Setter Property="Padding" Value="12,12"/><Setter Property="Margin" Value="0,2,0,2"/>
+   <Setter Property="FontSize" Value="13"/><Setter Property="Cursor" Value="Hand"/>
+  </Style>
+ </Window.Resources>
+</Window>
