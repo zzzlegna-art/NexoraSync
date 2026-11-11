@@ -1,12 +1,12 @@
 [Setup]
 AppId={{A9F6E2A7-9D2E-4C17-AC21-6D4A6A2B12F0}
 AppName=NEXORA SYNC
-AppVersion=0.1.2
+AppVersion=0.1.3
 AppPublisher=NEXORA
 DefaultDirName={autopf}\NEXORA SYNC
 DefaultGroupName=NEXORA SYNC
 OutputDir=..\artifacts
-OutputBaseFilename=NexoraSync-Setup-0.1.2
+OutputBaseFilename=NexoraSync-Setup-0.1.3
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
