@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>NexoraSync</AssemblyName>
+    <ApplicationIcon>nexora.ico</ApplicationIcon>
     <RootNamespace>NexoraSync</RootNamespace>
     <Version>0.1.2</Version>
     <PublishSingleFile>true</PublishSingleFile>
