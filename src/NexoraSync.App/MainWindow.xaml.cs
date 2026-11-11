@@ -81,6 +81,7 @@ public partial class MainWindow : Window
         ["Theme_E7C58D"] = ("#E7C58D", "#82591D"),
         ["Theme_9CB0C9"] = ("#9CB0C9", "#5B6D83"),
         ["Theme_NavHoverText"] = ("#FFFFFF", "#172437"),
+        ["Theme_NavSelectedText"] = ("#FFFFFF", "#1E3C5C"),
     };
     private bool _isEnglish;
     private string _activePanel = "overview";
