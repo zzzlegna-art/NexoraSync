@@ -15,6 +15,12 @@ jobs:
         shell: pwsh
         run: |
           $version = "${{ github.ref_name }}".TrimStart('v')
+          if ($version -notmatch '^\d+\.\d+\.\d+$') { throw "Release tag must look like v1.2.3" }
+          $project = 'src/NexoraSync.App/NexoraSync.App.csproj'
+          [xml]$xml = Get-Content $project
+          $property = $xml.Project.PropertyGroup | Where-Object { $_.Version } | Select-Object -First 1
+          $property.Version = $version
+          $xml.Save((Resolve-Path $project))
           "APP_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -36,8 +42,8 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force artifacts | Out-Null
           $iss = Get-Content installer/NexoraSync.iss -Raw
-          $iss = $iss -replace 'AppVersion=0.1.7', "AppVersion=$env:APP_VERSION"
-          $iss = $iss -replace 'OutputBaseFilename=NexoraSync-Setup-0.1.7', "OutputBaseFilename=NexoraSync-Setup-$env:APP_VERSION"
+          $iss = $iss -replace 'AppVersion=0.1.8', "AppVersion=$env:APP_VERSION"
+          $iss = $iss -replace 'OutputBaseFilename=NexoraSync-Setup-0.1.8', "OutputBaseFilename=NexoraSync-Setup-$env:APP_VERSION"
           Set-Content installer/NexoraSync.Release.iss $iss
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer/NexoraSync.Release.iss
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
@@ -46,4 +52,4 @@ jobs:
         with:
           name: NEXORA SYNC ${{ github.ref_name }}
           generate_release_notes: true
-          files: artifacts/NexoraSync-Setup-${{ github.ref_name }}.exe
+          files: artifacts/NexoraSync-Setup-*.exe
