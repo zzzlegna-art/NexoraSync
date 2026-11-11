@@ -80,6 +80,7 @@ public partial class MainWindow : Window
         ["Theme_352B1D"] = ("#352B1D", "#FFF4DF"),
         ["Theme_E7C58D"] = ("#E7C58D", "#82591D"),
         ["Theme_9CB0C9"] = ("#9CB0C9", "#5B6D83"),
+        ["Theme_NavHoverText"] = ("#FFFFFF", "#172437"),
     };
     private bool _isEnglish;
     private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(8) };
