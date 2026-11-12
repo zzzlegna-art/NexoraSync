@@ -101,6 +101,7 @@ public partial class MainWindow : Window
     private DispatcherTimer? _autoUpdateTimer;
     private string? _stagedInstallerPath;
     private bool _autoUpdateCheckRunning;
+    private bool _isLaunchingInstaller;
     private string _selectedFolder = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "NexoraSync", "Shared");
 
@@ -395,6 +396,7 @@ public partial class MainWindow : Window
 
     private void MainWindow_Closing(object? sender, CancelEventArgs e)
     {
+        if (_isLaunchingInstaller) return;
         if (string.IsNullOrWhiteSpace(_stagedInstallerPath) || !File.Exists(_stagedInstallerPath))
             return;
 
@@ -510,6 +512,7 @@ public partial class MainWindow : Window
                 Verb = "runas"
             };
             Process.Start(startInfo);
+            _isLaunchingInstaller = true;
             UpdateStatus.Text = _isEnglish ? "Installing update. NEXORA SYNC will restart when setup completes." : "Instalando actualización. NEXORA SYNC se reiniciará cuando termine la instalación.";
             Application.Current.Shutdown();
         }
