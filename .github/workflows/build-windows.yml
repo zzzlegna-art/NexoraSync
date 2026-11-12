@@ -3,8 +3,10 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  push:
+    tags: ['v*']
 permissions:
-  contents: read
+  contents: write
   actions: write
 jobs:
   build:
@@ -43,3 +45,18 @@ jobs:
           path: artifacts/NexoraSync-Setup-${{ env.APP_VERSION }}.exe
           if-no-files-found: error
           retention-days: 30
+      - name: Validate release tag matches application version
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        run: |
+          if ("${{ github.ref_name }}" -ne "v${{ env.APP_VERSION }}") {
+            throw "Release tag must match application version v$env:APP_VERSION"
+          }
+      - name: Publish official GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: NEXORA SYNC ${{ github.ref_name }}
+          generate_release_notes: true
+          files: artifacts/NexoraSync-Setup-${{ env.APP_VERSION }}.exe
