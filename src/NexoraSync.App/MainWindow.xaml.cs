@@ -433,72 +433,90 @@ public partial class MainWindow : Window
 
     private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
     {
+        if (_autoUpdateCheckRunning)
+        {
+            UpdateStatus.Text = _isEnglish ? "An update check is already running." : "Ya hay una comprobación de actualizaciones en curso.";
+            return;
+        }
+
         CheckUpdatesButton.IsEnabled = false;
         UpdateNowButton.Visibility = Visibility.Collapsed;
         UpdateProgress.Visibility = Visibility.Collapsed;
-        UpdateStatus.Text = _isEnglish ? "Checking official releases..." : "Consultando versiones oficiales...";
+        UpdateStatus.Text = _isEnglish ? "Checking and downloading the latest version..." : "Buscando y descargando la última versión...";
+        _autoUpdateCheckRunning = true;
         try
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, "https://api.github.com/repos/zzzlegna-art/NexoraSync/releases/latest");
-            request.Headers.UserAgent.ParseAdd("NexoraSync-Updater");
-            request.Headers.Accept.ParseAdd("application/vnd.github+json");
-            using var response = await Http.SendAsync(request);
-            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            var updateDirectory = Path.Combine(SettingsDirectory, "Updates");
+            var result = await AutoUpdateService.CheckAndStageAsync(CurrentVersion, updateDirectory);
+            if (!result.UpdateAvailable || string.IsNullOrWhiteSpace(result.InstallerPath))
             {
-                UpdateStatus.Text = _isEnglish ? "No published release is available yet." : "Aún no hay una versión publicada.";
-                return;
-            }
-            response.EnsureSuccessStatusCode();
-            using var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
-            var root = json.RootElement;
-            var tag = root.GetProperty("tag_name").GetString()?.TrimStart('v');
-            if (!Version.TryParse(tag, out var latest) || !Version.TryParse(CurrentVersion, out var current))
-                throw new InvalidDataException("The release version is invalid.");
-
-            if (latest <= current)
-            {
-                _installerDownloadUrl = null;
-                _installerDigest = null;
-                _latestVersion = null;
-                UpdateStatus.Text = _isEnglish ? "You already have the latest version." : "Ya tienes la última versión.";
+                _stagedInstallerPath = null;
+                UpdateStatus.Text = _isEnglish ? result.Message : result.Message switch
+                {
+                    "Already up to date." => "Ya tienes la última versión.",
+                    "No published release is available." => "Aún no hay una versión oficial publicada.",
+                    _ => "No hay actualizaciones disponibles."
+                };
                 return;
             }
 
-            if (!root.TryGetProperty("assets", out var assets))
-                throw new InvalidDataException("The release has no installer assets.");
-            var asset = assets.EnumerateArray().FirstOrDefault(item =>
-                item.TryGetProperty("name", out var name) &&
-                name.GetString()?.Equals($"NexoraSync-Setup-{tag}.exe", StringComparison.OrdinalIgnoreCase) == true);
-            if (asset.ValueKind == JsonValueKind.Undefined)
-                throw new InvalidDataException(_isEnglish ? "The installer is not attached to this release yet." : "El instalador todavía no está adjunto a esta publicación.");
-
-            _installerDownloadUrl = asset.GetProperty("browser_download_url").GetString();
-            _installerDigest = asset.TryGetProperty("digest", out var digest) ? digest.GetString() : null;
-            _latestVersion = tag;
-            UpdateNowButton.Content = _isEnglish ? "Download and install update" : "Descargar e instalar actualización";
+            _stagedInstallerPath = result.InstallerPath;
+            UpdateNowButton.Content = _isEnglish ? "Install downloaded update" : "Instalar actualización descargada";
             UpdateNowButton.Visibility = Visibility.Visible;
+            UpdateStatus.Text = _isEnglish
+                ? $"Version {result.Version} was downloaded and verified. Choose Install now or close the app to install later."
+                : $"La versión {result.Version} se descargó y verificó. Puedes instalarla ahora o cerrar la aplicación para instalarla después.";
 
             var answer = MessageBox.Show(this,
                 _isEnglish
-                    ? $"NEXORA SYNC {_latestVersion} is available. Your current version is {CurrentVersion}.\n\nDo you want to download the update now?"
-                    : $"Hay una nueva versión de NEXORA SYNC ({_latestVersion}). Tu versión actual es {CurrentVersion}.\n\n¿Deseas descargar la actualización ahora?",
-                _isEnglish ? "Update available" : "Actualización disponible",
+                    ? $"NEXORA SYNC {result.Version} is ready. Install and restart the application now?"
+                    : $"NEXORA SYNC {result.Version} está lista. ¿Deseas instalarla y reiniciar la aplicación ahora?",
+                _isEnglish ? "Update ready" : "Actualización lista",
                 MessageBoxButton.YesNo, MessageBoxImage.Information);
+
             if (answer == MessageBoxResult.Yes)
-                await DownloadAndInstallUpdateAsync();
-            else
-                UpdateStatus.Text = _isEnglish ? "Update postponed. You can install it whenever you want." : "Actualización pospuesta. Puedes instalarla cuando quieras.";
+                LaunchStagedUpdate();
         }
         catch (Exception ex)
         {
-            UpdateStatus.Text = (_isEnglish ? "Could not check updates: " : "No se pudieron consultar actualizaciones: ") + ex.Message;
+            UpdateStatus.Text = (_isEnglish ? "Update failed: " : "La actualización falló: ") + ex.Message;
         }
-        finally { CheckUpdatesButton.IsEnabled = true; }
+        finally
+        {
+            _autoUpdateCheckRunning = false;
+            CheckUpdatesButton.IsEnabled = true;
+        }
     }
 
-    private async void UpdateNow_Click(object sender, RoutedEventArgs e)
+    private void UpdateNow_Click(object sender, RoutedEventArgs e)
     {
-        await DownloadAndInstallUpdateAsync();
+        LaunchStagedUpdate();
+    }
+
+    private void LaunchStagedUpdate()
+    {
+        if (string.IsNullOrWhiteSpace(_stagedInstallerPath) || !File.Exists(_stagedInstallerPath))
+        {
+            UpdateStatus.Text = _isEnglish ? "The downloaded installer could not be found. Check for updates again." : "No se encontró el instalador descargado. Busca actualizaciones nuevamente.";
+            return;
+        }
+
+        try
+        {
+            var startInfo = new ProcessStartInfo(_stagedInstallerPath,
+                "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS")
+            {
+                UseShellExecute = true,
+                Verb = "runas"
+            };
+            Process.Start(startInfo);
+            UpdateStatus.Text = _isEnglish ? "Installing update. NEXORA SYNC will restart when setup completes." : "Instalando actualización. NEXORA SYNC se reiniciará cuando termine la instalación.";
+            Application.Current.Shutdown();
+        }
+        catch (Exception ex)
+        {
+            UpdateStatus.Text = (_isEnglish ? "Could not start the installer: " : "No se pudo iniciar el instalador: ") + ex.Message;
+        }
     }
 
     private async Task DownloadAndInstallUpdateAsync()
