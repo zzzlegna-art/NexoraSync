@@ -1,4 +1,4 @@
-# NEXORA SYNC 0.2.2
+# NEXORA SYNC 0.2.3
 
 Aplicación de escritorio Windows para construir un espacio privado de archivos compartidos entre equipos autorizados.
 
