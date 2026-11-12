@@ -49,14 +49,30 @@ internal static class AutoUpdateService
         var finalPath = Path.Combine(updateDirectory, expectedName);
         if (File.Exists(finalPath))
         {
-            await using var existing = File.OpenRead(finalPath);
-            var existingHash = Convert.ToHexString(await SHA256.HashDataAsync(existing, cancellationToken)).ToLowerInvariant();
-            if (existingHash.Equals(digest["sha256:".Length..], StringComparison.OrdinalIgnoreCase))
-                return new(true, tag, finalPath, "Update already downloaded and verified.");
-            File.Delete(finalPath);
+            try
+            {
+                await using var existing = new FileStream(finalPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                var existingHash = Convert.ToHexString(await SHA256.HashDataAsync(existing, cancellationToken)).ToLowerInvariant();
+                if (existingHash.Equals(digest["sha256:".Length..], StringComparison.OrdinalIgnoreCase))
+                    return new(true, tag, finalPath, "Update already downloaded and verified.");
+
+                // A stale installer may be locked by Windows or antivirus software.
+                // Never let that prevent downloading a fresh, uniquely named copy.
+                try { File.Delete(finalPath); }
+                catch (IOException) { finalPath = Path.Combine(updateDirectory, $"NexoraSync-Setup-{tag}-{Guid.NewGuid():N}.exe"); }
+                catch (UnauthorizedAccessException) { finalPath = Path.Combine(updateDirectory, $"NexoraSync-Setup-{tag}-{Guid.NewGuid():N}.exe"); }
+            }
+            catch (IOException)
+            {
+                finalPath = Path.Combine(updateDirectory, $"NexoraSync-Setup-{tag}-{Guid.NewGuid():N}.exe");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                finalPath = Path.Combine(updateDirectory, $"NexoraSync-Setup-{tag}-{Guid.NewGuid():N}.exe");
+            }
         }
 
-        var temporaryPath = finalPath + ".download";
+        var temporaryPath = finalPath + "." + Guid.NewGuid().ToString("N") + ".download";
         try
         {
             using var downloadRequest = new HttpRequestMessage(HttpMethod.Get, url);
