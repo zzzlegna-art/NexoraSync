@@ -1,5 +1,8 @@
 using System.IO;
 using System.Windows;
+using System.ComponentModel;
+using System.Windows.Threading;
+using NexoraSync.Updates;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Net.Http;
@@ -95,6 +98,9 @@ public partial class MainWindow : Window
     private string? _installerDigest;
     private string? _latestVersion;
     private LocalChangeMonitor? _localChangeMonitor;
+    private DispatcherTimer? _autoUpdateTimer;
+    private string? _stagedInstallerPath;
+    private bool _autoUpdateCheckRunning;
     private string _selectedFolder = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "NexoraSync", "Shared");
 
@@ -327,13 +333,102 @@ public partial class MainWindow : Window
 
     private void MainWindow_Closed(object? sender, EventArgs e)
     {
+        _autoUpdateTimer?.Stop();
+        _autoUpdateTimer = null;
         _localChangeMonitor?.Dispose();
         _localChangeMonitor = null;
     }
 
-    private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        // Update checks are intentionally manual so startup never waits on the network.
+        var updateDirectory = Path.Combine(SettingsDirectory, "Updates");
+        var staged = Directory.Exists(updateDirectory)
+            ? Directory.GetFiles(updateDirectory, "NexoraSync-Setup-*.exe").OrderByDescending(File.GetLastWriteTimeUtc).FirstOrDefault()
+            : null;
+        if (!string.IsNullOrWhiteSpace(staged))
+        {
+            _stagedInstallerPath = staged;
+            UpdateStatus.Text = _isEnglish
+                ? "A verified update is ready. Close NEXORA SYNC to apply it."
+                : "Hay una actualización verificada y lista. Cierra NEXORA SYNC para aplicarla.";
+        }
+
+        // Run after the window is ready; network activity never blocks startup.
+        await CheckAndStageUpdateAsync();
+        _autoUpdateTimer = new DispatcherTimer { Interval = TimeSpan.FromHours(6) };
+        _autoUpdateTimer.Tick += async (_, _) => await CheckAndStageUpdateAsync();
+        _autoUpdateTimer.Start();
+    }
+
+    private async Task CheckAndStageUpdateAsync()
+    {
+        if (_autoUpdateCheckRunning) return;
+        _autoUpdateCheckRunning = true;
+        try
+        {
+            var updateDirectory = Path.Combine(SettingsDirectory, "Updates");
+            var result = await AutoUpdateService.CheckAndStageAsync(CurrentVersion, updateDirectory);
+            if (result.UpdateAvailable && !string.IsNullOrWhiteSpace(result.InstallerPath))
+            {
+                _stagedInstallerPath = result.InstallerPath;
+                UpdateStatus.Text = _isEnglish
+                    ? $"Version {result.Version} is downloaded, verified and ready. It will install when you close the app."
+                    : $"La versión {result.Version} ya se descargó y verificó. Se instalará cuando cierres la aplicación.";
+            }
+            else if (string.IsNullOrWhiteSpace(_stagedInstallerPath))
+            {
+                UpdateStatus.Text = _isEnglish ? result.Message : result.Message switch
+                {
+                    "Already up to date." => "NEXORA SYNC está actualizado.",
+                    "No published release is available." => "Aún no hay versiones oficiales publicadas.",
+                    _ => "No hay actualizaciones pendientes."
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            // Automatic checks are silent: an offline PC must continue working normally.
+            System.Diagnostics.Debug.WriteLine("NEXORA automatic update check: " + ex.Message);
+        }
+        finally { _autoUpdateCheckRunning = false; }
+    }
+
+    private void MainWindow_Closing(object? sender, CancelEventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(_stagedInstallerPath) || !File.Exists(_stagedInstallerPath))
+            return;
+
+        var answer = MessageBox.Show(this,
+            _isEnglish
+                ? "A verified NEXORA SYNC update is ready. Install it now? Choose No to keep using the current version and install later."
+                : "Hay una actualización verificada de NEXORA SYNC lista. ¿Deseas instalarla ahora? Si eliges No, podrás seguir usando la versión actual e instalarla después.",
+            _isEnglish ? "Update ready" : "Actualización lista",
+            MessageBoxButton.YesNoCancel, MessageBoxImage.Information);
+
+        if (answer == MessageBoxResult.Cancel)
+        {
+            e.Cancel = true;
+            return;
+        }
+        if (answer == MessageBoxResult.No) return;
+
+        try
+        {
+            var startInfo = new ProcessStartInfo(_stagedInstallerPath,
+                "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS")
+            {
+                UseShellExecute = true,
+                Verb = "runas"
+            };
+            Process.Start(startInfo);
+        }
+        catch (Exception ex)
+        {
+            e.Cancel = true;
+            MessageBox.Show(this,
+                (_isEnglish ? "The update could not be started: " : "No se pudo iniciar la actualización: ") + ex.Message,
+                "NEXORA SYNC", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
     }
 
     private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
