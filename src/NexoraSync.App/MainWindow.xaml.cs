@@ -103,6 +103,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         LoadPreferences();
         InstalledVersionText.Text = CurrentVersion;
+        SidebarVersionText.Text = (_isEnglish ? "VERSION " : "VERSIÓN ") + CurrentVersion;
         ApplyTheme(false);
         FolderPath.Text = _selectedFolder;
         FolderPathSettings.Text = _selectedFolder;
@@ -244,7 +245,7 @@ public partial class MainWindow : Window
             ["Actualizaciones"] = "Updates", ["ESPACIO DE TRABAJO"] = "WORKSPACE", ["PREFERENCIAS"] = "PREFERENCES",
             ["BIENVENIDO A TU NUBE PRIVADA"] = "WELCOME TO YOUR PRIVATE CLOUD", ["Todo conectado."] = "Everything, connected.",
             ["Un solo espacio para tus archivos en todos tus dispositivos autorizados."] = "A single space for your files across every authorized device.",
-            ["Configurar carpeta compartida   →"] = "Configure shared folder   →", ["DISPOSITIVOS CONECTADOS"] = "CONNECTED DEVICES",
+            ["Configurar carpeta compartida   →"] = "Configure shared folder   →", ["Tu espacio. Todo bajo control."] = "Your workspace. Everything under control.", ["Una experiencia segura y organizada para tus archivos, en cada equipo autorizado."] = "A secure, organized experience for your files on every authorized device.", ["Tus archivos. En perfecta armonía."] = "Your files. In perfect sync.", ["Privado, confiable y siempre bajo tu control."] = "Private, reliable and always in your control.", ["Este equipo"] = "This computer", ["DISPOSITIVOS CONECTADOS"] = "CONNECTED DEVICES",
             ["Solo este equipo"] = "This computer only", ["CAMBIOS PENDIENTES"] = "PENDING CHANGES",
             ["Motor de sincronización sin conectar"] = "Sync engine not connected", ["ESTADO DE SINCRONIZACIÓN"] = "SYNC STATUS",
             ["Esperando configuración del servidor"] = "Waiting for server setup", ["Actividad reciente"] = "Recent activity",
