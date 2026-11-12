@@ -64,9 +64,9 @@ internal static class AutoUpdateService
 
             stage = "descargar el instalador";
             using (var downloadRequest = new HttpRequestMessage(HttpMethod.Get, url))
-            using (var downloadResponse = await Client.SendAsync(downloadRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken))
             {
                 downloadRequest.Headers.UserAgent.ParseAdd("NexoraSync-AutoUpdater");
+                using var downloadResponse = await Client.SendAsync(downloadRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
                 downloadResponse.EnsureSuccessStatusCode();
                 await using var input = await downloadResponse.Content.ReadAsStreamAsync(cancellationToken);
                 await using var output = new FileStream(temporaryPath, FileMode.CreateNew, FileAccess.Write, FileShare.None, 81920, useAsync: true);
