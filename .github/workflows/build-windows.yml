@@ -7,6 +7,11 @@ on:
 permissions:
   contents: write
   actions: write
+
+# Avoid overlapping builds/releases when several commits are pushed in quick succession.
+concurrency:
+  group: nexora-sync-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   build:
     runs-on: windows-latest
