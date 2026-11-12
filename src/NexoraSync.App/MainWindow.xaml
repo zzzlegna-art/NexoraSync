@@ -1,7 +1,7 @@
 <Window x:Class="NexoraSync.MainWindow"
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
- Title="NEXORA SYNC" Loaded="MainWindow_Loaded" Closed="MainWindow_Closed" Height="820" Width="1380" MinHeight="720" MinWidth="1120"
+ Title="NEXORA SYNC" FontFamily="Segoe UI" Loaded="MainWindow_Loaded" Closed="MainWindow_Closed" Height="900" Width="1480" MinHeight="760" MinWidth="1180"
  WindowStartupLocation="CenterScreen" Background="{DynamicResource Theme_090E18}" WindowStyle="SingleBorderWindow">
  <Window.Resources>
   <SolidColorBrush x:Key="Page" Color="#090E18"/>
@@ -119,14 +119,14 @@
   <SolidColorBrush x:Key="Theme_NavSelectedText" Color="#FFFFFF"/>
  </Window.Resources>
  <Grid x:Name="Root">
-  <Grid.ColumnDefinitions><ColumnDefinition Width="248"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+  <Grid.ColumnDefinitions><ColumnDefinition Width="238"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
   <Border Grid.Column="0" Background="{DynamicResource Theme_0D1421}" BorderBrush="{DynamicResource Theme_1B293B}" BorderThickness="0,0,1,0">
-   <Grid Margin="19,22,17,18">
+   <Grid Margin="20,25,18,20">
     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
     <StackPanel>
-     <StackPanel Orientation="Horizontal" Margin="4,2,0,34">
-      <Border Width="37" Height="37" CornerRadius="11" Background="{DynamicResource Theme_183B62}" BorderBrush="{DynamicResource Theme_2864A1}" BorderThickness="1"><TextBlock Text="N" Foreground="{DynamicResource Theme_70B8FF}" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
-      <StackPanel Margin="11,0,0,0" VerticalAlignment="Center"><TextBlock Text="NEXORA" Foreground="{DynamicResource Theme_F4F8FF}" FontSize="18" FontWeight="Bold"/><TextBlock Text="S Y N C" Foreground="{DynamicResource Theme_60AFFF}" FontSize="9" FontWeight="Bold" Margin="1,1,0,0"/></StackPanel>
+     <StackPanel Orientation="Horizontal" Margin="4,2,0,42">
+      <Border Width="42" Height="42" CornerRadius="13" Background="{DynamicResource Theme_183B62}" BorderBrush="{DynamicResource Theme_2864A1}" BorderThickness="1"><TextBlock Text="N" Foreground="{DynamicResource Theme_70B8FF}" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+      <StackPanel Margin="11,0,0,0" VerticalAlignment="Center"><TextBlock Text="NEXORA" Foreground="{DynamicResource Theme_F4F8FF}" FontSize="19" FontWeight="Bold"/><TextBlock Text="S Y N C" Foreground="{DynamicResource Theme_60AFFF}" FontSize="9" FontWeight="Bold" Margin="1,1,0,0"/></StackPanel>
      </StackPanel>
      <TextBlock Text="ESPACIO DE TRABAJO" Foreground="{DynamicResource Theme_61738C}" FontSize="9" FontWeight="Bold" Margin="9,0,0,10"/>
      <Button x:Name="NavOverview" Content="◫    Resumen" Style="{StaticResource NavButton}" Background="{DynamicResource Theme_172A40}" Foreground="{DynamicResource Theme_FFFFFF}" Click="NavOverview_Click"/>
@@ -140,16 +140,16 @@
     </StackPanel>
     <StackPanel Grid.Row="2">
      <Border Background="{DynamicResource Theme_111F30}" BorderBrush="{DynamicResource Theme_263A53}" BorderThickness="1" CornerRadius="11" Padding="13" Margin="0,0,0,15">
-      <StackPanel><TextBlock Text="NEXORA PROTOCOL" Foreground="{DynamicResource Theme_6E829C}" FontSize="9" FontWeight="Bold"/><TextBlock Text="Your files. In sync." Foreground="{DynamicResource Theme_EAF2FD}" FontSize="13" FontWeight="SemiBold" Margin="0,7,0,3"/><TextBlock Text="Private, reliable and always yours." Foreground="{DynamicResource Theme_8498B2}" FontSize="10" TextWrapping="Wrap"/></StackPanel>
+      <StackPanel><TextBlock Text="NEXORA PROTOCOL" Foreground="{DynamicResource Theme_6E829C}" FontSize="9" FontWeight="Bold"/><TextBlock Text="Tus archivos. En perfecta armonía." Foreground="{DynamicResource Theme_EAF2FD}" FontSize="13" FontWeight="SemiBold" Margin="0,7,0,3"/><TextBlock Text="Privado, confiable y siempre bajo tu control." Foreground="{DynamicResource Theme_8498B2}" FontSize="10" TextWrapping="Wrap"/></StackPanel>
      </Border>
-     <DockPanel><TextBlock Text="VERSION 0.1.6" Foreground="{DynamicResource Theme_536780}" FontSize="9" FontWeight="Bold"/><TextBlock Text="● LOCAL PREVIEW" Foreground="{DynamicResource Theme_D5A85A}" FontSize="9" FontWeight="Bold" HorizontalAlignment="Right"/></DockPanel>
+     <DockPanel><TextBlock x:Name="SidebarVersionText" Text="VERSION 0.2.1" Foreground="{DynamicResource Theme_536780}" FontSize="9" FontWeight="Bold"/><TextBlock Text="● LOCAL PREVIEW" Foreground="{DynamicResource Theme_D5A85A}" FontSize="9" FontWeight="Bold" HorizontalAlignment="Right"/></DockPanel>
     </StackPanel>
    </Grid>
   </Border>
-  <Grid Grid.Column="1" Margin="34,26,34,26">
+  <Grid Grid.Column="1" Margin="38,30,38,30">
    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-   <DockPanel Margin="0,0,0,27">
-    <StackPanel DockPanel.Dock="Left"><TextBlock x:Name="PageTitle" Text="Resumen" Foreground="{DynamicResource Theme_F2F6FC}" FontSize="26" FontWeight="SemiBold"/><TextBlock x:Name="PageSubtitle" Text="Tu espacio de sincronización de un vistazo." Foreground="{DynamicResource Theme_899BB3}" FontSize="12" Margin="0,6,0,0"/></StackPanel>
+   <DockPanel Margin="0,0,0,25">
+    <StackPanel DockPanel.Dock="Left"><TextBlock x:Name="PageTitle" Text="Resumen" Foreground="{DynamicResource Theme_F2F6FC}" FontSize="29" FontWeight="SemiBold"/><TextBlock x:Name="PageSubtitle" Text="Tu espacio de sincronización de un vistazo." Foreground="{DynamicResource Theme_899BB3}" FontSize="12" Margin="0,6,0,0"/></StackPanel>
     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
      <Border Background="{DynamicResource Theme_172536}" BorderBrush="{DynamicResource Theme_2B405A}" BorderThickness="1" CornerRadius="8" Padding="12,8" Margin="0,0,10,0"><StackPanel Orientation="Horizontal"><Ellipse Width="7" Height="7" Fill="{DynamicResource Theme_E3B45F}" Margin="0,0,8,0"/><TextBlock Text="Modo local" Foreground="{DynamicResource Theme_D7E2F1}" FontSize="11" FontWeight="SemiBold"/></StackPanel></Border>
      <Button x:Name="ThemeButton" Content="☼   Tema claro" Style="{StaticResource SecondaryButton}" Click="ThemeButton_Click"/>
@@ -158,22 +158,22 @@
    <Grid Grid.Row="1">
     <Grid x:Name="OverviewPanel" Visibility="Visible">
      <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-     <Border Background="{DynamicResource Theme_10243A}" BorderBrush="{DynamicResource Theme_234B72}" BorderThickness="1" CornerRadius="15" Padding="25" Margin="0,0,0,19">
+     <Border Background="{DynamicResource Theme_10243A}" BorderBrush="{DynamicResource Theme_234B72}" BorderThickness="1" CornerRadius="18" Padding="30" Margin="0,0,0,20">
       <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-       <StackPanel VerticalAlignment="Center"><TextBlock Text="BIENVENIDO A TU NUBE PRIVADA" Foreground="{DynamicResource Theme_72B9FF}" FontSize="9" FontWeight="Bold"/><TextBlock Text="Todo conectado." Foreground="{DynamicResource Theme_F1F6FD}" FontSize="25" FontWeight="SemiBold" Margin="0,10,0,5"/><TextBlock Text="Un solo espacio para tus archivos en todos tus dispositivos autorizados." Foreground="{DynamicResource Theme_A8BED7}" FontSize="12"/><Button Content="Configurar carpeta compartida   →" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Left" Margin="0,19,0,0" Click="NavFolder_Click"/></StackPanel>
-       <Border Grid.Column="1" Width="126" Height="126" CornerRadius="63" Background="{DynamicResource Theme_17395A}" BorderBrush="{DynamicResource Theme_2C659B}" BorderThickness="1" Margin="25,0,8,0"><Grid><Ellipse Width="82" Height="82" Stroke="{DynamicResource Theme_3F91E5}" StrokeThickness="1" Opacity=".65"/><Ellipse Width="55" Height="55" Stroke="{DynamicResource Theme_76B9FF}" StrokeThickness="1.5"/><TextBlock Text="N" Foreground="{DynamicResource Theme_D9EEFF}" FontSize="36" FontWeight="Light" HorizontalAlignment="Center" VerticalAlignment="Center"/></Grid></Border>
+       <StackPanel VerticalAlignment="Center"><TextBlock Text="BIENVENIDO A TU NUBE PRIVADA" Foreground="{DynamicResource Theme_72B9FF}" FontSize="9" FontWeight="Bold"/><TextBlock Text="Tu espacio. Todo bajo control." Foreground="{DynamicResource Theme_F1F6FD}" FontSize="30" FontWeight="SemiBold" Margin="0,11,0,6"/><TextBlock Text="Una experiencia segura y organizada para tus archivos, en cada equipo autorizado." Foreground="{DynamicResource Theme_A8BED7}" FontSize="13"/><Button Content="Configurar carpeta compartida   →" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Left" Margin="0,19,0,0" Click="NavFolder_Click"/></StackPanel>
+       <Border Grid.Column="1" Width="138" Height="138" CornerRadius="69" Background="{DynamicResource Theme_17395A}" BorderBrush="{DynamicResource Theme_2C659B}" BorderThickness="1" Margin="25,0,8,0"><Grid><Ellipse Width="82" Height="82" Stroke="{DynamicResource Theme_3F91E5}" StrokeThickness="1" Opacity=".65"/><Ellipse Width="55" Height="55" Stroke="{DynamicResource Theme_76B9FF}" StrokeThickness="1.5"/><TextBlock Text="N" Foreground="{DynamicResource Theme_D9EEFF}" FontSize="36" FontWeight="Light" HorizontalAlignment="Center" VerticalAlignment="Center"/></Grid></Border>
       </Grid>
      </Border>
-     <UniformGrid Grid.Row="1" Columns="3" Margin="0,0,0,19">
-      <Border Background="{DynamicResource Theme_111C2B}" BorderBrush="{DynamicResource Theme_233249}" BorderThickness="1" CornerRadius="12" Padding="17" Margin="0,0,12,0"><StackPanel><TextBlock Text="DISPOSITIVOS CONECTADOS" Foreground="{DynamicResource Theme_8295AF}" FontSize="9" FontWeight="Bold"/><TextBlock Text="01" Foreground="{DynamicResource Theme_F1F6FD}" FontSize="27" FontWeight="SemiBold" Margin="0,8,0,2"/><TextBlock Text="Solo este equipo" Foreground="{DynamicResource Theme_7D91AA}" FontSize="10"/></StackPanel></Border>
+     <UniformGrid Grid.Row="1" Columns="3" Margin="0,0,0,20">
+      <Border Background="{DynamicResource Theme_111C2B}" BorderBrush="{DynamicResource Theme_233249}" BorderThickness="1" CornerRadius="15" Padding="21" Margin="0,0,13,0"><StackPanel><TextBlock Text="DISPOSITIVOS CONECTADOS" Foreground="{DynamicResource Theme_8295AF}" FontSize="9" FontWeight="Bold"/><TextBlock Text="01" Foreground="{DynamicResource Theme_F1F6FD}" FontSize="31" FontWeight="SemiBold" Margin="0,10,0,3"/><TextBlock Text="Este equipo" Foreground="{DynamicResource Theme_7D91AA}" FontSize="10"/></StackPanel></Border>
       <Border Background="{DynamicResource Theme_111C2B}" BorderBrush="{DynamicResource Theme_233249}" BorderThickness="1" CornerRadius="12" Padding="17" Margin="0,0,12,0"><StackPanel><TextBlock Text="CAMBIOS PENDIENTES" Foreground="{DynamicResource Theme_8295AF}" FontSize="9" FontWeight="Bold"/><TextBlock x:Name="PendingChangesCount" Text="0" Foreground="{DynamicResource Theme_F1F6FD}" FontSize="27" FontWeight="SemiBold" Margin="0,8,0,2"/><TextBlock x:Name="SyncEngineStatusText" Text="Monitor local inactivo" Foreground="{DynamicResource Theme_D9AD61}" FontSize="10" TextWrapping="Wrap"/></StackPanel></Border>
-      <Border Background="{DynamicResource Theme_111C2B}" BorderBrush="{DynamicResource Theme_233249}" BorderThickness="1" CornerRadius="12" Padding="17"><StackPanel><TextBlock Text="ESTADO DE SINCRONIZACIÓN" Foreground="{DynamicResource Theme_8295AF}" FontSize="9" FontWeight="Bold"/><TextBlock Text="Local" Foreground="{DynamicResource Theme_F1F6FD}" FontSize="27" FontWeight="SemiBold" Margin="0,8,0,2"/><TextBlock Text="Esperando configuración del servidor" Foreground="{DynamicResource Theme_D9AD61}" FontSize="10"/></StackPanel></Border>
+      <Border Background="{DynamicResource Theme_111C2B}" BorderBrush="{DynamicResource Theme_233249}" BorderThickness="1" CornerRadius="15" Padding="21"><StackPanel><TextBlock Text="ESTADO DE SINCRONIZACIÓN" Foreground="{DynamicResource Theme_8295AF}" FontSize="9" FontWeight="Bold"/><TextBlock Text="Local" Foreground="{DynamicResource Theme_F1F6FD}" FontSize="27" FontWeight="SemiBold" Margin="0,8,0,2"/><TextBlock Text="Esperando configuración del servidor" Foreground="{DynamicResource Theme_D9AD61}" FontSize="10"/></StackPanel></Border>
      </UniformGrid>
-     <Grid Grid.Row="2"><Grid.ColumnDefinitions><ColumnDefinition Width="1.25*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-      <Border Grid.Column="0" Background="{DynamicResource Theme_111C2B}" BorderBrush="{DynamicResource Theme_233249}" BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,0,13,0">
-       <StackPanel><DockPanel><TextBlock Text="Shared folder" Foreground="{DynamicResource Theme_F1F6FD}" FontSize="15" FontWeight="SemiBold"/><TextBlock Text="UBICACIÓN LOCAL" Foreground="{DynamicResource Theme_70849F}" FontSize="9" FontWeight="Bold" DockPanel.Dock="Right" VerticalAlignment="Center"/></DockPanel><TextBlock Text="Elige dónde estarán tus archivos sincronizados en este equipo." Foreground="{DynamicResource Theme_8498B1}" FontSize="11" Margin="0,7,0,16" TextWrapping="Wrap"/><TextBox x:Name="FolderPath" Text="C:\NexoraSync\Shared" IsReadOnly="True"/><DockPanel Margin="0,12,0,0"><Button Content="Browse folder" Style="{StaticResource SecondaryButton}" Click="BrowseFolder_Click" DockPanel.Dock="Right" Margin="8,0,0,0"/><TextBlock x:Name="FolderStatus" Text="Carpeta sin configurar" Foreground="{DynamicResource Theme_8295AF}" FontSize="10" VerticalAlignment="Center"/></DockPanel></StackPanel>
+     <Grid Grid.Row="2"><Grid.ColumnDefinitions><ColumnDefinition Width="1.15*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+      <Border Grid.Column="0" Background="{DynamicResource Theme_111C2B}" BorderBrush="{DynamicResource Theme_233249}" BorderThickness="1" CornerRadius="15" Padding="23" Margin="0,0,14,0">
+       <StackPanel><DockPanel><TextBlock Text="Carpeta compartida" Foreground="{DynamicResource Theme_F1F6FD}" FontSize="15" FontWeight="SemiBold"/><TextBlock Text="UBICACIÓN LOCAL" Foreground="{DynamicResource Theme_70849F}" FontSize="9" FontWeight="Bold" DockPanel.Dock="Right" VerticalAlignment="Center"/></DockPanel><TextBlock Text="Elige dónde estarán tus archivos sincronizados en este equipo." Foreground="{DynamicResource Theme_8498B1}" FontSize="11" Margin="0,7,0,16" TextWrapping="Wrap"/><TextBox x:Name="FolderPath" Text="C:\NexoraSync\Shared" IsReadOnly="True"/><DockPanel Margin="0,12,0,0"><Button Content="Explorar carpeta" Style="{StaticResource SecondaryButton}" Click="BrowseFolder_Click" DockPanel.Dock="Right" Margin="8,0,0,0"/><TextBlock x:Name="FolderStatus" Text="Carpeta sin configurar" Foreground="{DynamicResource Theme_8295AF}" FontSize="10" VerticalAlignment="Center"/></DockPanel></StackPanel>
       </Border>
-      <Border Grid.Column="1" Background="{DynamicResource Theme_111C2B}" BorderBrush="{DynamicResource Theme_233249}" BorderThickness="1" CornerRadius="12" Padding="20">
+      <Border Grid.Column="1" Background="{DynamicResource Theme_111C2B}" BorderBrush="{DynamicResource Theme_233249}" BorderThickness="1" CornerRadius="15" Padding="23">
        <StackPanel><TextBlock Text="Actividad reciente" Foreground="{DynamicResource Theme_F1F6FD}" FontSize="15" FontWeight="SemiBold"/><TextBlock Text="Los eventos de tu espacio aparecerán aquí." Foreground="{DynamicResource Theme_8498B1}" FontSize="11" Margin="0,7,0,17"/><StackPanel Orientation="Horizontal" Margin="0,5"><Ellipse Width="7" Height="7" Fill="{DynamicResource Theme_D9AD61}" Margin="0,4,10,0"/><StackPanel><TextBlock Text="Esperando configuración" Foreground="{DynamicResource Theme_DCE7F5}" FontSize="11" FontWeight="SemiBold"/><TextBlock Text="Aún no hay actividad de sincronización" Foreground="{DynamicResource Theme_7488A2}" FontSize="10" Margin="0,3,0,0"/></StackPanel></StackPanel><Border Height="1" Background="{DynamicResource Theme_26374D}" Margin="0,15"/><TextBlock Text="Cuando la sincronización esté activa, aquí aparecerán los cambios, conexiones y alertas de conflictos." Foreground="{DynamicResource Theme_778BA5}" FontSize="10" TextWrapping="Wrap"/></StackPanel>
       </Border>
      </Grid>
