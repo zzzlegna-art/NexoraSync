@@ -125,7 +125,7 @@
     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
     <StackPanel>
      <StackPanel Orientation="Horizontal" Margin="4,2,0,36">
-      <Border Width="54" Height="54" CornerRadius="17 Background="{DynamicResource Theme_183B62}" BorderBrush="{DynamicResource Theme_2864A1}" BorderThickness="1"><TextBlock Text="N" Foreground="{DynamicResource Theme_70B8FF}" FontSize="27" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+      <Border Width="54" Height="54" CornerRadius="17" Background="{DynamicResource Theme_183B62}" BorderBrush="{DynamicResource Theme_2864A1}" BorderThickness="1"><TextBlock Text="N" Foreground="{DynamicResource Theme_70B8FF}" FontSize="27" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
       <StackPanel Margin="11,0,0,0" VerticalAlignment="Center"><TextBlock Text="NEXORA" Foreground="{DynamicResource Theme_F4F8FF}" FontSize="19" FontWeight="Bold"/><TextBlock Text="S Y N C" Foreground="{DynamicResource Theme_60AFFF}" FontSize="9" FontWeight="Bold" Margin="1,1,0,0"/></StackPanel>
      </StackPanel>
      <TextBlock Text="ESPACIO DE TRABAJO" Foreground="{DynamicResource Theme_61738C}" FontSize="9" FontWeight="Bold" Margin="9,0,0,10"/>
