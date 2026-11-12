@@ -59,3 +59,34 @@ jobs:
           name: NEXORA SYNC ${{ github.ref_name }}
           generate_release_notes: true
           files: artifacts/NexoraSync-Setup-${{ env.APP_VERSION }}.exe
+
+      - name: Check whether this version needs publishing
+        if: github.ref == 'refs/heads/main'
+        id: release_check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const version = process.env.APP_VERSION;
+            const tag = `v${version}`;
+            try {
+              const release = await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag
+              });
+              core.info(`Release ${tag} already exists.`);
+              core.setOutput('publish', 'false');
+            } catch (error) {
+              if (error.status !== 404) throw error;
+              core.info(`Release ${tag} does not exist; it will be published.`);
+              core.setOutput('publish', 'true');
+            }
+      - name: Publish version automatically from main
+        if: github.ref == 'refs/heads/main' && steps.release_check.outputs.publish == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.APP_VERSION }}
+          target_commitish: main
+          name: NEXORA SYNC v${{ env.APP_VERSION }}
+          generate_release_notes: true
+          files: artifacts/NexoraSync-Setup-${{ env.APP_VERSION }}.exe
