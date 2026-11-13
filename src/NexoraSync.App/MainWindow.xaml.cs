@@ -209,10 +209,10 @@ public partial class MainWindow : Window
         };
         foreach (var item in buttons)
         {
-            item.Value.Background = item.Key == _activePanel
-                ? (Brush)FindResource("Theme_172A40") : Brushes.Transparent;
-            item.Value.Foreground = item.Key == _activePanel
-                ? (Brush)FindResource("Theme_NavSelectedText") : (Brush)FindResource("Theme_9AAAC0");
+            var selected = item.Key == _activePanel;
+            item.Value.Tag = selected ? "Active" : null;
+            item.Value.Background = selected ? (Brush)FindResource("Theme_172A40") : Brushes.Transparent;
+            item.Value.Foreground = selected ? (Brush)FindResource("Theme_NavSelectedText") : (Brush)FindResource("Theme_9AAAC0");
         }
     }
 
